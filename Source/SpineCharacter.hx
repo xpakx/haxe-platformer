@@ -12,6 +12,7 @@ import spine.starling.SkeletonSprite;
 
 class SpineCharacter extends Sprite {
     private var skeletonSprite:SkeletonSprite;
+    private var running:Bool = false;
 
     public function new() {
         super();
@@ -31,7 +32,7 @@ class SpineCharacter extends Sprite {
 
         skeletonSprite = new SkeletonSprite(skeletonData);
 
-        skeletonSprite.state.setAnimationByName(0, "walk", true);
+        skeletonSprite.state.setAnimationByName(0, "idle", true);
 
 	Browser.console.log("--- Available Spine Animations ---");
         for (anim in skeletonData.animations) {
@@ -42,12 +43,25 @@ class SpineCharacter extends Sprite {
 	Starling.current.juggler.add(skeletonSprite);
     }
 
-
-  public override function dispose():Void {
+   public override function dispose():Void {
         if (skeletonSprite != null) {
             Starling.current.juggler.remove(skeletonSprite);
         }
         super.dispose();
     }
+
+   public function startRun():Void {
+       if (skeletonSprite == null) return;
+       if (running) return;
+       running = true;
+       skeletonSprite.state.setAnimationByName(0, "walk", true);
+   }
+
+   public function endRun():Void {
+       if (skeletonSprite == null) return;
+       if (!running) return;
+       running = false;
+       skeletonSprite.state.setAnimationByName(0, "idle", true);
+   }
 }
 

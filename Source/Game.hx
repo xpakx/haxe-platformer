@@ -10,6 +10,13 @@ import js.Browser;
 
 class Game extends Sprite {
     private var hero:SpineCharacter;
+    private var leftPressed:Bool = false;
+    private var rightPressed:Bool = false;
+    private var vx:Float = 0.0;
+    private static inline var ACCELERATION:Float = 4500.0;
+    private static inline var MAX_SPEED:Float = 500.0;
+    private static inline var FRICTION:Float = 14.0;
+
 
     public function new() {
         super();
@@ -27,7 +34,63 @@ class Game extends Sprite {
 
 
 	addChild(hero);
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+        stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+        addEventListener(Event.ENTER_FRAME, onEnterFrame);
     }
 
+    private function onKeyDown(e:KeyboardEvent):Void {
+        if (e.keyCode == Keyboard.LEFT || e.keyCode == Keyboard.A) {
+	    leftPressed = true;
+	} 
+        if (e.keyCode == Keyboard.RIGHT || e.keyCode == Keyboard.D) {
+	    rightPressed = true;
+	}
+    }
+
+    private function onKeyUp(e:KeyboardEvent):Void {
+        if (e.keyCode == Keyboard.LEFT || e.keyCode == Keyboard.A) {
+	    leftPressed = false;
+	} 
+        if (e.keyCode == Keyboard.RIGHT || e.keyCode == Keyboard.D) {
+	    rightPressed = false;
+	}
+    }
+
+    private function onEnterFrame(e:EnterFrameEvent):Void {
+        updateChar(e.passedTime);
+    }
+
+    private function updateChar(dt:Float):Void {
+        var moveDir:Float = 0.0;
+        if (leftPressed) moveDir -= 1.0;
+        if (rightPressed) moveDir += 1.0;
+
+        if (moveDir != 0.0) {
+            vx += moveDir * ACCELERATION * dt;
+            hero.startRun();
+        } else {
+            vx -= vx * FRICTION * dt;
+            hero.endRun();
+        }
+
+        if (vx > MAX_SPEED) vx = MAX_SPEED;
+        if (vx < -MAX_SPEED) vx = -MAX_SPEED;
+	if (vx < 0) {
+		hero.scaleX = -0.5; 
+	} else {
+		hero.scaleX = 0.5; 
+	}
+
+        hero.x += vx * dt;
+
+        if (hero.x < 0) {
+            hero.x = 0;
+	    vx = 0;
+        } else if (hero.x + hero.width > stage.stageWidth) {
+            hero.x = stage.stageWidth - hero.width;
+	    vx = 0;
+        }
+    }
 }
 
