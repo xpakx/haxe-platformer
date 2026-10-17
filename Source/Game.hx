@@ -99,7 +99,7 @@ class Game extends Sprite {
 
 
     private function fall(dt:Float):Void {
-        if (hero.y >= 900) {
+        if (isOnFloor()) {
 	    switchState(Floor);
 	    return;
 	}
@@ -137,6 +137,14 @@ class Game extends Sprite {
             hero.x = stage.stageWidth - hero.width;
 	    vx = 0;
         }
+
+	if (!isOnFloor()) {
+	    switchState(Fall);
+	}
     }
+
+   public function isOnFloor():Bool {
+      return hero.y >= 900;
+   }
 }
 
