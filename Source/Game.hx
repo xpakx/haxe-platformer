@@ -8,6 +8,13 @@ import openfl.ui.Keyboard;
 
 import js.Browser;
 
+
+enum State {
+   Fall;
+   Floor;
+   Jump;
+}
+
 class Game extends Sprite {
     private var hero:SpineCharacter;
     private var leftPressed:Bool = false;
@@ -16,6 +23,8 @@ class Game extends Sprite {
     private static inline var ACCELERATION:Float = 4500.0;
     private static inline var MAX_SPEED:Float = 500.0;
     private static inline var FRICTION:Float = 14.0;
+
+    private var state:State = Fall;
 
 
     public function new() {
@@ -28,7 +37,7 @@ class Game extends Sprite {
 
 	hero = new SpineCharacter();
 	hero.x = stage.stageWidth / 2;
-	hero.y = stage.stageHeight - 100;
+	hero.y = stage.stageHeight - 500;
 	hero.scaleX = 0.5;
 	hero.scaleY = 0.5;
 
@@ -61,7 +70,30 @@ class Game extends Sprite {
         updateChar(e.passedTime);
     }
 
+
+
     private function updateChar(dt:Float):Void {
+        switch(state) {
+	    case Fall:
+	       fall(dt);
+	    case Floor:
+	       move(dt);
+	    case Jump:
+	}
+    }
+
+
+    private function fall(dt:Float):Void {
+        if (hero.y >= 900) {
+	    state = Floor;
+	    hero.endRun();
+	    return;
+	}
+	hero.y += 10;
+	if (hero.y > 900) hero.y = 900;
+    }
+
+    private function move(dt:Float):Void {
         var moveDir:Float = 0.0;
         if (leftPressed) moveDir -= 1.0;
         if (rightPressed) moveDir += 1.0;
