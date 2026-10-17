@@ -33,6 +33,7 @@ class SpineCharacter extends Sprite {
         skeletonSprite = new SkeletonSprite(skeletonData);
 
         skeletonSprite.state.setAnimationByName(0, "idle", true);
+	skeletonSprite.state.data.defaultMix = 0.2;
 
 	Browser.console.log("--- Available Spine Animations ---");
         for (anim in skeletonData.animations) {
