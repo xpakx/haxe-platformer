@@ -13,6 +13,8 @@ import spine.starling.SkeletonSprite;
 class SpineCharacter extends Sprite {
     private var skeletonSprite:SkeletonSprite;
     private var running:Bool = false;
+    private static inline var JUMP_PEAK_TIME:Float = 0.5; 
+    private static inline var JUMP_END_TIME:Float = 2.0;
 
     public function new() {
         super();
@@ -67,7 +69,16 @@ class SpineCharacter extends Sprite {
    
    public function startJump():Void {
        if (skeletonSprite == null) return;
-       skeletonSprite.state.setAnimationByName(0, "jump", true);
+       var entry = skeletonSprite.state.setAnimationByName(0, "jump", true);
+       entry.animationStart = 0.0;
+       entry.animationEnd = JUMP_PEAK_TIME;
+   }
+
+   public function startFall():Void {
+       if (skeletonSprite == null) return;
+       var entry = skeletonSprite.state.setAnimationByName(0, "jump", true);
+       entry.animationStart = JUMP_PEAK_TIME;
+       entry.animationEnd = JUMP_END_TIME;
    }
 }
 

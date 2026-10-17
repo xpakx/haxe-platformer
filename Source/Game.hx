@@ -37,7 +37,7 @@ class Game extends Sprite {
 
 	hero = new SpineCharacter();
 	hero.x = stage.stageWidth / 2;
-	hero.y = stage.stageHeight - 500;
+	hero.y = stage.stageHeight - 100;
 	hero.scaleX = 0.5;
 	hero.scaleY = 0.5;
 
@@ -89,7 +89,7 @@ class Game extends Sprite {
 
         switch(newState) {
 	    case Fall:
-	       hero.endRun();
+	       hero.startFall();
 	    case Floor:
 	       hero.endRun();
 	    case Jump:
