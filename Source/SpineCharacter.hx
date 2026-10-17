@@ -64,5 +64,10 @@ class SpineCharacter extends Sprite {
        running = false;
        skeletonSprite.state.setAnimationByName(0, "idle", true);
    }
+   
+   public function startJump():Void {
+       if (skeletonSprite == null) return;
+       skeletonSprite.state.setAnimationByName(0, "jump", true);
+   }
 }
 

@@ -41,6 +41,7 @@ class Game extends Sprite {
 	hero.scaleX = 0.5;
 	hero.scaleY = 0.5;
 
+	switchState(state);
 
 	addChild(hero);
         stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
@@ -83,10 +84,23 @@ class Game extends Sprite {
     }
 
 
+    private function switchState(newState:State):Void {
+        state = newState;
+
+        switch(newState) {
+	    case Fall:
+	       hero.endRun();
+	    case Floor:
+	       hero.endRun();
+	    case Jump:
+	       hero.startJump();
+	}
+    }
+
+
     private function fall(dt:Float):Void {
         if (hero.y >= 900) {
-	    state = Floor;
-	    hero.endRun();
+	    switchState(Floor);
 	    return;
 	}
 	hero.y += 10;
