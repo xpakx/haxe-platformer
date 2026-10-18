@@ -31,6 +31,7 @@ class Game extends Sprite {
     private var vy:Float = 0.0;
     private static inline var JUMP_STRENGTH:Float = -650.0;
     private static inline var GRAVITY:Float = 1800.0;
+    private static inline var GRAVITY_FALL:Float = 2600.0;
 
     private var state:State = Fall;
 
@@ -119,9 +120,12 @@ class Game extends Sprite {
     private function fall(dt:Float):Void {
         if (isOnFloor()) {
 	    switchState(Floor);
+	    vy = 0;
 	    return;
 	}
-	hero.y += 10;
+
+	vy += GRAVITY_FALL * dt;
+	hero.y += vy * dt;
 	if (hero.y > 900) hero.y = 900;
     }
 
