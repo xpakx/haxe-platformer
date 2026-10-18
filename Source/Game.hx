@@ -29,7 +29,7 @@ class Game extends Sprite {
     private var spacePressed:Bool = false;
     private var jumpTime:Float = 0.0;
     private var vy:Float = 0.0;
-    private static inline var JUMP_STRENGTH:Float = -650.0;
+    private static inline var JUMP_STRENGTH:Float = -1050.0;
     private static inline var GRAVITY:Float = 1800.0;
     private static inline var GRAVITY_FALL:Float = 2600.0;
 
@@ -132,9 +132,17 @@ class Game extends Sprite {
     private function jump(dt:Float):Void {
         jumpTime += dt;
         if (!spacePressed) {
+            if (vy < 0) {
+                vy *= 0.3; 
+            }
 	    switchState(Fall);
 	    return;
 	}
+
+        var currentGravity = GRAVITY;
+        if (Math.abs(vy) < 150.0) {
+            currentGravity *= 0.3;
+        }
 
 	vy += GRAVITY * dt;
 	hero.y += vy * dt;
