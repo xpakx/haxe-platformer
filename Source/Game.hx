@@ -28,6 +28,9 @@ class Game extends Sprite {
     private static inline var MAX_JUMP_TIME:Float = 0.7;
     private var spacePressed:Bool = false;
     private var jumpTime:Float = 0.0;
+    private var vy:Float = 0.0;
+    private static inline var JUMP_STRENGTH:Float = -650.0;
+    private static inline var GRAVITY:Float = 1800.0;
 
     private var state:State = Fall;
 
@@ -107,6 +110,7 @@ class Game extends Sprite {
 	       hero.endRun();
 	    case Jump:
 	       jumpTime = 0.0;
+	       vy = JUMP_STRENGTH;
 	       hero.startJump();
 	}
     }
@@ -123,7 +127,15 @@ class Game extends Sprite {
 
     private function jump(dt:Float):Void {
         jumpTime += dt;
-        if (!spacePressed || jumpTime >= MAX_JUMP_TIME) {
+        if (!spacePressed) {
+	    switchState(Fall);
+	    return;
+	}
+
+	vy += GRAVITY * dt;
+	hero.y += vy * dt;
+
+	if (vy >= 0) {
 	    switchState(Fall);
 	}
     }
