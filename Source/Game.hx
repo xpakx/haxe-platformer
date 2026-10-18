@@ -16,7 +16,7 @@ enum State {
 }
 
 class Game extends Sprite {
-    private var hero:SpineCharacter;
+    private var hero:TestCharacter;
     private var leftPressed:Bool = false;
     private var rightPressed:Bool = false;
     private var vx:Float = 0.0;
@@ -35,9 +35,9 @@ class Game extends Sprite {
     private function onAddedToStage(e:Event):Void {
         removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 
-	hero = new SpineCharacter();
+	hero = new TestCharacter();
 	hero.x = stage.stageWidth / 2;
-	hero.y = stage.stageHeight - 100;
+	hero.y = stage.stageHeight - 500;
 	hero.scaleX = 0.5;
 	hero.scaleY = 0.5;
 
