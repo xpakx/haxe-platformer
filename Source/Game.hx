@@ -24,6 +24,11 @@ class Game extends Sprite {
     private static inline var MAX_SPEED:Float = 500.0;
     private static inline var FRICTION:Float = 14.0;
 
+
+    private static inline var MAX_JUMP_TIME:Float = 0.7;
+    private var spacePressed:Bool = false;
+    private var jumpTime:Float = 0.0;
+
     private var state:State = Fall;
 
 
@@ -56,6 +61,9 @@ class Game extends Sprite {
         if (e.keyCode == Keyboard.RIGHT || e.keyCode == Keyboard.D) {
 	    rightPressed = true;
 	}
+        if (e.keyCode == Keyboard.SPACE) {
+	    spacePressed = true;
+	}
     }
 
     private function onKeyUp(e:KeyboardEvent):Void {
@@ -65,13 +73,14 @@ class Game extends Sprite {
         if (e.keyCode == Keyboard.RIGHT || e.keyCode == Keyboard.D) {
 	    rightPressed = false;
 	}
+        if (e.keyCode == Keyboard.SPACE) {
+	    spacePressed = false;
+	}
     }
 
     private function onEnterFrame(e:EnterFrameEvent):Void {
         updateChar(e.passedTime);
     }
-
-
 
     private function updateChar(dt:Float):Void {
         switch(state) {
@@ -79,7 +88,11 @@ class Game extends Sprite {
 	       fall(dt);
 	    case Floor:
 	       move(dt);
+	       if (spacePressed) {
+	          switchState(Jump);
+	       }
 	    case Jump:
+	       jump(dt);
 	}
     }
 
@@ -93,6 +106,7 @@ class Game extends Sprite {
 	    case Floor:
 	       hero.endRun();
 	    case Jump:
+	       jumpTime = 0.0;
 	       hero.startJump();
 	}
     }
@@ -105,6 +119,13 @@ class Game extends Sprite {
 	}
 	hero.y += 10;
 	if (hero.y > 900) hero.y = 900;
+    }
+
+    private function jump(dt:Float):Void {
+        jumpTime += dt;
+        if (!spacePressed || jumpTime >= MAX_JUMP_TIME) {
+	    switchState(Fall);
+	}
     }
 
     private function move(dt:Float):Void {
