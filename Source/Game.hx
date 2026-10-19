@@ -90,13 +90,22 @@ class Game extends Sprite {
         switch(state) {
 	    case Fall:
 	       fall(dt);
-	    case Floor:
 	       move(dt);
+	    case Floor:
+	       if (move(dt)) {
+	           hero.startRun();
+	       } else {
+	           hero.endRun();
+	       }
+	       if (!isOnFloor()) {
+		       switchState(Fall);
+	       }
 	       if (spacePressed) {
 	          switchState(Jump);
 	       }
 	    case Jump:
 	       jump(dt);
+	       move(dt);
 	}
     }
 
@@ -152,17 +161,17 @@ class Game extends Sprite {
 	}
     }
 
-    private function move(dt:Float):Void {
+    private function move(dt:Float):Bool {
         var moveDir:Float = 0.0;
+	var moved:Bool = false;
         if (leftPressed) moveDir -= 1.0;
         if (rightPressed) moveDir += 1.0;
 
         if (moveDir != 0.0) {
             vx += moveDir * ACCELERATION * dt;
-            hero.startRun();
+	    moved = true;
         } else {
             vx -= vx * FRICTION * dt;
-            hero.endRun();
         }
 
         if (vx > MAX_SPEED) vx = MAX_SPEED;
@@ -183,9 +192,7 @@ class Game extends Sprite {
 	    vx = 0;
         }
 
-	if (!isOnFloor()) {
-	    switchState(Fall);
-	}
+	return moved;
     }
 
    public function isOnFloor():Bool {
