@@ -52,7 +52,7 @@ class Game extends Sprite {
 
 	hero = new TestCharacter();
 	hero.x = stage.stageWidth / 2;
-	hero.y = stage.stageHeight - 500;
+	hero.y = stage.stageHeight - 1000;
 	hero.scaleX = 0.5;
 	hero.scaleY = 0.5;
 
@@ -239,7 +239,7 @@ class Game extends Sprite {
     }
 
     public function isOnFloor():Bool {
-        return hero.y >= 900;
+        return hero.y >= 500;
     }
 
     private function stateIsUnlocked(newState:State):Bool {
