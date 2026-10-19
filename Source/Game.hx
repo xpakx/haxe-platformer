@@ -32,6 +32,7 @@ class Game extends Sprite {
     private static inline var JUMP_STRENGTH:Float = -1050.0;
     private static inline var GRAVITY:Float = 1800.0;
     private static inline var GRAVITY_FALL:Float = 2600.0;
+    private var canJump:Bool = false;
 
     private var state:State = Fall;
 
@@ -67,6 +68,9 @@ class Game extends Sprite {
 	}
         if (e.keyCode == Keyboard.SPACE) {
 	    spacePressed = true;
+	}
+        if (e.keyCode == Keyboard.J) {
+	    canJump = !canJump;
 	}
     }
 
@@ -111,6 +115,9 @@ class Game extends Sprite {
 
 
     private function switchState(newState:State):Void {
+        if (!stateIsUnlocked(newState)) {
+	    return;
+	}
         state = newState;
 
         switch(newState) {
@@ -198,5 +205,16 @@ class Game extends Sprite {
    public function isOnFloor():Bool {
       return hero.y >= 900;
    }
+
+    private function stateIsUnlocked(newState:State):Bool {
+        switch(newState) {
+	    case Fall:
+	       return true;
+	    case Floor:
+	       return true;
+	    case Jump:
+	       return canJump;
+	}
+    }
 }
 
