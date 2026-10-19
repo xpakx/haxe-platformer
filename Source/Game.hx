@@ -28,11 +28,14 @@ class Game extends Sprite {
 
     private static inline var MAX_JUMP_TIME:Float = 0.7;
     private var spacePressed:Bool = false;
+    private var spaceJustPressed:Bool = false;
     private var jumpTime:Float = 0.0;
     private var vy:Float = 0.0;
     private static inline var JUMP_STRENGTH:Float = -1050.0;
     private static inline var GRAVITY:Float = 1800.0;
     private static inline var GRAVITY_FALL:Float = 2600.0;
+
+    private static inline var DOUBLE_JUMP_STRENGTH:Float = -650.0;
     private var doubleJumpUnlocked:Bool = false;
     private var canDoubleJump:Bool = false;
 
@@ -69,6 +72,11 @@ class Game extends Sprite {
 	    rightPressed = true;
 	}
         if (e.keyCode == Keyboard.SPACE) {
+	    if (!spacePressed) {
+	       spaceJustPressed = true;
+	    } else {
+	       spaceJustPressed = false;
+	    }
 	    spacePressed = true;
 	}
         if (e.keyCode == Keyboard.J) {
@@ -85,6 +93,7 @@ class Game extends Sprite {
 	}
         if (e.keyCode == Keyboard.SPACE) {
 	    spacePressed = false;
+            spaceJustPressed = false;
 	}
     }
 
@@ -136,7 +145,7 @@ class Game extends Sprite {
 	       vy = JUMP_STRENGTH;
 	       hero.startJump();
 	    case DoubleJump:
-	       vy = JUMP_STRENGTH;
+	       vy = DOUBLE_JUMP_STRENGTH;
 	       canDoubleJump = false;
 	       hero.startDoubleJump();
 	}
@@ -153,7 +162,7 @@ class Game extends Sprite {
 	vy += GRAVITY_FALL * dt;
 	hero.y += vy * dt;
 	if (hero.y > 900) hero.y = 900;
-        if (spacePressed) {
+        if (spaceJustPressed) {
 	   switchState(DoubleJump);
 	}
     }
