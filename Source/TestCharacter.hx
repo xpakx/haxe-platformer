@@ -35,5 +35,9 @@ class TestCharacter extends Sprite {
    public function startFall():Void {
        rect.color = 0xFF3333;
    }
+   
+   public function startDoubleJump():Void {
+       rect.color = 0x00CCCC;
+   }
 }
 

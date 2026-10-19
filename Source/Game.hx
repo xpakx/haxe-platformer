@@ -13,6 +13,7 @@ enum State {
    Fall;
    Floor;
    Jump;
+   DoubleJump;
 }
 
 class Game extends Sprite {
@@ -32,7 +33,8 @@ class Game extends Sprite {
     private static inline var JUMP_STRENGTH:Float = -1050.0;
     private static inline var GRAVITY:Float = 1800.0;
     private static inline var GRAVITY_FALL:Float = 2600.0;
-    private var canJump:Bool = false;
+    private var doubleJumpUnlocked:Bool = false;
+    private var canDoubleJump:Bool = false;
 
     private var state:State = Fall;
 
@@ -70,7 +72,7 @@ class Game extends Sprite {
 	    spacePressed = true;
 	}
         if (e.keyCode == Keyboard.J) {
-	    canJump = !canJump;
+	    doubleJumpUnlocked = !doubleJumpUnlocked;
 	}
     }
 
@@ -110,6 +112,9 @@ class Game extends Sprite {
 	    case Jump:
 	       jump(dt);
 	       move(dt);
+	    case DoubleJump:
+	       doubleJump(dt);
+	       move(dt);
 	}
     }
 
@@ -126,9 +131,14 @@ class Game extends Sprite {
 	    case Floor:
 	       hero.endRun();
 	    case Jump:
+	       canDoubleJump = true;
 	       jumpTime = 0.0;
 	       vy = JUMP_STRENGTH;
 	       hero.startJump();
+	    case DoubleJump:
+	       vy = JUMP_STRENGTH;
+	       canDoubleJump = false;
+	       hero.startDoubleJump();
 	}
     }
 
@@ -143,6 +153,9 @@ class Game extends Sprite {
 	vy += GRAVITY_FALL * dt;
 	hero.y += vy * dt;
 	if (hero.y > 900) hero.y = 900;
+        if (spacePressed) {
+	   switchState(DoubleJump);
+	}
     }
 
     private function jump(dt:Float):Void {
@@ -155,6 +168,20 @@ class Game extends Sprite {
 	    return;
 	}
 
+        var currentGravity = GRAVITY;
+        if (Math.abs(vy) < 150.0) {
+            currentGravity *= 0.3;
+        }
+
+	vy += GRAVITY * dt;
+	hero.y += vy * dt;
+
+	if (vy >= 0) {
+	    switchState(Fall);
+	}
+    }
+
+    private function doubleJump(dt:Float):Void {
         var currentGravity = GRAVITY;
         if (Math.abs(vy) < 150.0) {
             currentGravity *= 0.3;
@@ -202,9 +229,9 @@ class Game extends Sprite {
 	return moved;
     }
 
-   public function isOnFloor():Bool {
-      return hero.y >= 900;
-   }
+    public function isOnFloor():Bool {
+        return hero.y >= 900;
+    }
 
     private function stateIsUnlocked(newState:State):Bool {
         switch(newState) {
@@ -213,7 +240,9 @@ class Game extends Sprite {
 	    case Floor:
 	       return true;
 	    case Jump:
-	       return canJump;
+	       return true;
+	    case DoubleJump:
+	       return doubleJumpUnlocked && canDoubleJump;
 	}
     }
 }
