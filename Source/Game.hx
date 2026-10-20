@@ -180,12 +180,6 @@ class Game extends Sprite {
 
 
     private function fall(dt:Float):Void {
-        if (isOnFloor()) {
-	    switchState(Floor);
-	    vy = 0;
-	    return;
-	}
-
 	vy += GRAVITY_FALL * dt;
 	var nextY = hero.y + vy * dt;
 
@@ -293,8 +287,6 @@ class Game extends Sprite {
     }
 
     public function isOnFloor():Bool {
-        if (vy < 0) return false;
-
         for (p in platforms) {
             var hitX = (hero.x + hero.width > p.x) && (hero.x < p.x + p.width);
 
@@ -303,12 +295,12 @@ class Game extends Sprite {
             var hitY = (hero.y >= floor) && (hero.y <= floor + 15);
 
             if (hitX && hitY) {
-                hero.y = floor;
                 return true;
             }
         }
         return false;
     }
+
 
     private function stateIsUnlocked(newState:State):Bool {
         switch(newState) {
