@@ -271,10 +271,12 @@ class Game extends Sprite {
         for (p in platforms) {
             var hitX = (hero.x + hero.width > p.x) && (hero.x < p.x + p.width);
 
-            var hitY = (hero.y >= p.y) && (hero.y <= p.y + 15);
+	    var floor = p.y - hero.height;
+
+            var hitY = (hero.y >= floor) && (hero.y <= floor + 15);
 
             if (hitX && hitY) {
-                hero.y = p.y;
+                hero.y = floor;
                 return true;
             }
         }
