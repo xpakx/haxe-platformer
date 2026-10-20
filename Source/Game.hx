@@ -76,12 +76,12 @@ class Game extends Sprite {
 
 
     private function initPlatforms():Void {
-	    platforms = [
-	    { x: 100, y: 700, width: 300, height: 20 },
-	    { x: 500, y: 550, width: 250, height: 20 },
-	    { x: 200, y: 400, width: 200, height: 20 },
-	    { x: 0, y: 850, width: stage.stageWidth, height: 50 }
-	    ];
+        platforms = [
+        { x: 100, y: 700, width: 300, height: 20 },
+        { x: 500, y: 550, width: 250, height: 20 },
+        { x: 200, y: 400, width: 200, height: 20 },
+        { x: 0, y: 850, width: stage.stageWidth, height: 50 }
+        ];
 
 	for (p in platforms) {
 	    var quad = new starling.display.Quad(p.width, p.height, 0x555555);
@@ -187,11 +187,38 @@ class Game extends Sprite {
 	}
 
 	vy += GRAVITY_FALL * dt;
-	hero.y += vy * dt;
-	if (hero.y > 900) hero.y = 900;
-        if (spaceJustPressed) {
-	   switchState(DoubleJump);
+	var nextY = hero.y + vy * dt;
+
+	var landedPlatform:Platform = null;
+	for (p in platforms) {
+	    var hitX = (hero.x + hero.width > p.x) && (hero.x < p.x + p.width);
+	    var floor = p.y - hero.height;
+	    var crossedTop = (hero.y <= floor) && (nextY >= floor);
+
+	    if (hitX && crossedTop) {
+	        landedPlatform = p;
+	        break;
+            }
 	}
+
+        if (landedPlatform != null) {
+	    hero.y = landedPlatform.y - hero.height;
+	    switchState(Floor);
+	    vy = 0;
+	    return;
+	}
+        hero.y = nextY;
+
+        if (hero.y > 900) {
+            hero.y = 900;
+            switchState(Floor);
+            vy = 0;
+        }
+
+        if (spaceJustPressed) {
+            switchState(DoubleJump);
+        }
+
     }
 
     private function jump(dt:Float):Void {
