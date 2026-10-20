@@ -16,6 +16,13 @@ enum State {
    DoubleJump;
 }
 
+typedef Platform = {
+    var x:Float;
+    var y:Float;
+    var width:Float;
+    var height:Float;
+}
+
 class Game extends Sprite {
     private var hero:TestCharacter;
     private var leftPressed:Bool = false;
@@ -41,6 +48,8 @@ class Game extends Sprite {
 
     private var state:State = Fall;
 
+    private var platforms:Array<Platform> = [];
+
 
     public function new() {
         super();
@@ -58,10 +67,28 @@ class Game extends Sprite {
 
 	switchState(state);
 
+	initPlatforms();
 	addChild(hero);
         stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
         stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
+    }
+
+
+    private function initPlatforms():Void {
+	    platforms = [
+	    { x: 100, y: 700, width: 300, height: 20 },
+	    { x: 500, y: 550, width: 250, height: 20 },
+	    { x: 200, y: 400, width: 200, height: 20 },
+	    { x: 0, y: 850, width: stage.stageWidth, height: 50 }
+	    ];
+
+	for (p in platforms) {
+	    var quad = new starling.display.Quad(p.width, p.height, 0x555555);
+	    quad.x = p.x;
+	    quad.y = p.y;
+	    addChild(quad);
+	}
     }
 
     private function onKeyDown(e:KeyboardEvent):Void {
