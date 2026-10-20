@@ -266,7 +266,19 @@ class Game extends Sprite {
     }
 
     public function isOnFloor():Bool {
-        return hero.y >= 500;
+        if (vy < 0) return false;
+
+        for (p in platforms) {
+            var hitX = (hero.x + hero.width > p.x) && (hero.x < p.x + p.width);
+
+            var hitY = (hero.y >= p.y) && (hero.y <= p.y + 15);
+
+            if (hitX && hitY) {
+                hero.y = p.y;
+                return true;
+            }
+        }
+        return false;
     }
 
     private function stateIsUnlocked(newState:State):Bool {
