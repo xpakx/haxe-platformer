@@ -39,5 +39,9 @@ class TestCharacter extends Sprite {
    public function startDoubleJump():Void {
        rect.color = 0x00CCCC;
    }
+   
+   public function startFloat():Void {
+       rect.color = 0xCC00CC;
+   }
 }
 

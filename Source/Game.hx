@@ -14,6 +14,7 @@ enum State {
    Floor;
    Jump;
    DoubleJump;
+   FloatState;
 }
 
 typedef Platform = {
@@ -49,6 +50,10 @@ class Game extends Sprite {
     private var state:State = Fall;
 
     private var platforms:Array<Platform> = [];
+
+
+    private static inline var GRAVITY_FLOAT:Float = 200.0;
+    private var canFloat:Bool = true;
 
 
     public function new() {
@@ -151,6 +156,9 @@ class Game extends Sprite {
 	    case DoubleJump:
 	       doubleJump(dt);
 	       move(dt);
+	    case FloatState:
+	       float(dt);
+	       move(dt);
 	}
     }
 
@@ -175,6 +183,9 @@ class Game extends Sprite {
 	       vy = DOUBLE_JUMP_STRENGTH;
 	       canDoubleJump = false;
 	       hero.startDoubleJump();
+	    case FloatState:
+	       vy = 0.0;
+	       hero.startFloat();
 	}
     }
 
@@ -211,7 +222,10 @@ class Game extends Sprite {
 
         if (spaceJustPressed) {
             switchState(DoubleJump);
-        }
+	    if (state == Fall) {
+	        switchState(FloatState);
+	    }
+        } 
 
     }
 
@@ -312,7 +326,44 @@ class Game extends Sprite {
 	       return true;
 	    case DoubleJump:
 	       return doubleJumpUnlocked && canDoubleJump;
+	    case FloatState:
+	       return canFloat;
 	}
+    }
+
+    private function float(dt:Float):Void {
+	vy += GRAVITY_FLOAT * dt;
+	var nextY = hero.y + vy * dt;
+
+	var landedPlatform:Platform = null;
+	for (p in platforms) {
+	    var hitX = (hero.x + hero.width > p.x) && (hero.x < p.x + p.width);
+	    var floor = p.y - hero.height;
+	    var crossedTop = (hero.y <= floor) && (nextY >= floor);
+
+	    if (hitX && crossedTop) {
+	        landedPlatform = p;
+	        break;
+            }
+	}
+
+        if (landedPlatform != null) {
+	    hero.y = landedPlatform.y - hero.height;
+	    switchState(Floor);
+	    vy = 0;
+	    return;
+	}
+        hero.y = nextY;
+
+        if (hero.y > 900) {
+            hero.y = 900;
+            switchState(Floor);
+            vy = 0;
+        }
+
+        if (!spacePressed) {
+            switchState(Fall);
+        }
     }
 }
 
