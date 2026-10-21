@@ -5,6 +5,9 @@ import starling.events.Event;
 import starling.events.KeyboardEvent;
 import starling.events.EnterFrameEvent;
 import openfl.ui.Keyboard;
+import openfl.media.Sound;
+import openfl.media.SoundChannel;
+import openfl.utils.Assets;
 
 import js.Browser;
 
@@ -56,6 +59,8 @@ class Game extends Sprite {
     private var canFloat:Bool = true;
     private var floatCooldown:Float = 0.0;
 
+    private var jumpSound:Sound;
+
 
     public function new() {
         super();
@@ -78,6 +83,8 @@ class Game extends Sprite {
         stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
         stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
+
+        jumpSound = Assets.getSound("assets/jump.ogg");
     }
 
 
@@ -106,6 +113,7 @@ class Game extends Sprite {
 	}
         if (e.keyCode == Keyboard.SPACE) {
 	    if (!spacePressed) {
+	       playSound();
 	       spaceJustPressed = true;
 	    } else {
 	       spaceJustPressed = false;
@@ -373,6 +381,10 @@ class Game extends Sprite {
         if (floatCooldown > 0.0) {
 	    floatCooldown -= dt;
 	}
+    }
+
+    private function playSound():Void {
+        jumpSound.play(0, 0);
     }
 }
 
