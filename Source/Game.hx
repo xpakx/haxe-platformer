@@ -54,6 +54,7 @@ class Game extends Sprite {
 
     private static inline var GRAVITY_FLOAT:Float = 200.0;
     private var canFloat:Bool = true;
+    private var floatCooldown:Float = 0.0;
 
 
     public function new() {
@@ -130,6 +131,7 @@ class Game extends Sprite {
     }
 
     private function onEnterFrame(e:EnterFrameEvent):Void {
+        updateTimers(e.passedTime);
         updateChar(e.passedTime);
     }
 
@@ -327,7 +329,7 @@ class Game extends Sprite {
 	    case DoubleJump:
 	       return doubleJumpUnlocked && canDoubleJump;
 	    case FloatState:
-	       return canFloat;
+	       return floatCooldown <= 0.0 && canFloat;
 	}
     }
 
@@ -363,7 +365,14 @@ class Game extends Sprite {
 
         if (!spacePressed) {
             switchState(Fall);
+	    floatCooldown = 0.2;
         }
+    }
+
+    private function updateTimers(dt:Float):Void {
+        if (floatCooldown > 0.0) {
+	    floatCooldown -= dt;
+	}
     }
 }
 
