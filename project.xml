@@ -11,5 +11,6 @@
 	<haxelib name="spine-haxe" />
 	
 	<assets path="Assets" rename="assets" />
+	<assets path="Assets/Audio" rename="audio" />
 	
 </project>

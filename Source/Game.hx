@@ -83,7 +83,7 @@ class Game extends Sprite {
         stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
         stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
-        jumpSound = Assets.getSound("assets/jump.ogg");
+	initSounds();
     }
 
 
@@ -380,6 +380,10 @@ class Game extends Sprite {
         if (floatCooldown > 0.0) {
 	    floatCooldown -= dt;
 	}
+    }
+
+    private function initSounds():Void {
+        jumpSound = Assets.getSound("audio/jump.ogg");
     }
 }
 
