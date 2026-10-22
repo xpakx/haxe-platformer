@@ -62,7 +62,7 @@ class Game extends Sprite {
     private var jumpSound:Sound;
 
     private var world:Sprite;
-
+    private var camera:Camera2D;
 
     public function new() {
         super();
@@ -74,6 +74,7 @@ class Game extends Sprite {
 
         world = new Sprite();
         addChild(world);
+        camera = new Camera2D(world, stage.stageWidth, stage.stageHeight);
 
 	hero = new TestCharacter();
 	hero.x = stage.stageWidth / 2;
@@ -85,6 +86,7 @@ class Game extends Sprite {
 
 	initPlatforms();
 	world.addChild(hero);
+        camera.setTarget(hero);
         stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
         stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
@@ -144,6 +146,7 @@ class Game extends Sprite {
     private function onEnterFrame(e:EnterFrameEvent):Void {
         updateTimers(e.passedTime);
         updateChar(e.passedTime);
+        camera.update(e.passedTime);
     }
 
     private function updateChar(dt:Float):Void {
