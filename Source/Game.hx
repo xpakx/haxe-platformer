@@ -238,6 +238,10 @@ class Game extends Sprite {
             vy = 0;
         }
 
+	if (detectLedge()) {
+	    Browser.console.log("LEDGE DETECTED");
+	}
+
         if (spaceJustPressed) {
             switchState(DoubleJump);
 	    if (state == Fall) {
@@ -393,6 +397,28 @@ class Game extends Sprite {
 
     private function initSounds():Void {
         jumpSound = Assets.getSound("audio/jump.ogg");
+    }
+
+    private function detectLedge():Bool {
+        var facingDir = (hero.scaleX < 0) ? -1 : 1;
+
+        var chestX = (facingDir < 0) ? hero.x : hero.x + hero.width;
+        var chestY = hero.y + (hero.height * 0.3);
+
+        var hitPlatform:Platform = null;
+        for (p in platforms) {
+            if (chestX >= p.x && chestX <= p.x + p.width &&
+                chestY >= p.y && chestY <= p.y + p.height) {
+                hitPlatform = p;
+                break;
+            }
+        }
+
+        if (hitPlatform == null) return false;
+
+	// TODO: check if there is a space for hero
+
+        return true;
     }
 }
 
