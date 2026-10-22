@@ -61,6 +61,8 @@ class Game extends Sprite {
 
     private var jumpSound:Sound;
 
+    private var world:Sprite;
+
 
     public function new() {
         super();
@@ -69,6 +71,9 @@ class Game extends Sprite {
 
     private function onAddedToStage(e:Event):Void {
         removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+
+        world = new Sprite();
+        addChild(world);
 
 	hero = new TestCharacter();
 	hero.x = stage.stageWidth / 2;
@@ -79,7 +84,7 @@ class Game extends Sprite {
 	switchState(state);
 
 	initPlatforms();
-	addChild(hero);
+	world.addChild(hero);
         stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
         stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
@@ -99,7 +104,7 @@ class Game extends Sprite {
 	    var quad = new starling.display.Quad(p.width, p.height, 0x555555);
 	    quad.x = p.x;
 	    quad.y = p.y;
-	    addChild(quad);
+	    world.addChild(quad);
 	}
     }
 
