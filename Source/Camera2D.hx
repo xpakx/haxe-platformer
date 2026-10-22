@@ -26,11 +26,24 @@ class Camera2D {
         this.target = target;
     }
 
+    public function snapToTarget():Void {
+        if (target == null) return;
+        
+        x = -target.x + (screenWidth / 2) - (target.width / 2) + offsetX;
+        y = -target.y + (screenHeight / 2) - (target.height / 2) + offsetY;
+        
+        world.x = x;
+        world.y = y;
+    }
+
     public function update(dt:Float):Void {
         if (target == null) return;
 
-        x = -target.x + (screenWidth / 2) - (target.width / 2) + offsetX;
-        y = -target.y + (screenHeight / 2) - (target.height / 2) + offsetY;
+        var targetX = -target.x + (screenWidth / 2) - (target.width / 2) + offsetX;
+        var targetY = -target.y + (screenHeight / 2) - (target.height / 2) + offsetY;
+
+        x += (targetX - x) * lerpSpeed * dt;
+        y += (targetY - y) * lerpSpeed * dt;
 
         world.x = x;
         world.y = y;

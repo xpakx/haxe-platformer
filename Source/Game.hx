@@ -87,6 +87,7 @@ class Game extends Sprite {
 	initPlatforms();
 	world.addChild(hero);
         camera.setTarget(hero);
+	camera.snapToTarget();
         stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
         stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
