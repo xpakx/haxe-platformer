@@ -64,6 +64,9 @@ class Game extends Sprite {
     private var world:Sprite;
     private var camera:Camera2D;
 
+    private var dialogueBox:DialogueBox;
+    private var isDialogueActive:Bool = false;
+
     public function new() {
         super();
         addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
@@ -92,6 +95,14 @@ class Game extends Sprite {
         stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
 	initSounds();
+
+
+        dialogueBox = new DialogueBox(stage.stageWidth, stage.stageHeight);
+        dialogueBox.visible = false;
+        dialogueBox.onComplete = () -> {
+            isDialogueActive = false;
+        };
+        addChild(dialogueBox);
     }
 
 
@@ -112,6 +123,10 @@ class Game extends Sprite {
     }
 
     private function onKeyDown(e:KeyboardEvent):Void {
+        if (isDialogueActive) {
+            dialogueBox.handleInput(e.keyCode);
+            return;
+        }
         if (e.keyCode == Keyboard.LEFT || e.keyCode == Keyboard.A) {
 	    leftPressed = true;
 	} 
@@ -129,6 +144,9 @@ class Game extends Sprite {
         if (e.keyCode == Keyboard.J) {
 	    doubleJumpUnlocked = !doubleJumpUnlocked;
 	}
+        if (e.keyCode == Keyboard.T) {
+	    dialogueTest();
+	}
     }
 
     private function onKeyUp(e:KeyboardEvent):Void {
@@ -145,6 +163,9 @@ class Game extends Sprite {
     }
 
     private function onEnterFrame(e:EnterFrameEvent):Void {
+        if (isDialogueActive) {
+            dialogueBox.update(e.passedTime);
+        }
         updateTimers(e.passedTime);
         updateChar(e.passedTime);
         camera.update(e.passedTime);
@@ -419,6 +440,16 @@ class Game extends Sprite {
 	// TODO: check if there is a space for hero
 
         return true;
+    }
+
+
+    private function dialogueTest():Void {
+        isDialogueActive = true;
+        dialogueBox.startDialogue([
+            { speaker: "Hero", text: "Blah blah blah" },
+            { speaker: "Test", text: "test test test test" },
+            { speaker: "Hero", text: "test test tst test test test" }
+        ]);
     }
 }
 
