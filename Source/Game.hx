@@ -182,6 +182,7 @@ class Game extends Sprite {
         updateTimers(e.passedTime);
         updateChar(e.passedTime);
         camera.update(e.passedTime);
+	updateCollectibles(e.passedTime);
     }
 
     private function updateChar(dt:Float):Void {
@@ -478,6 +479,26 @@ class Game extends Sprite {
             quad.y = c.y;
             c.quad = quad;
             world.addChild(quad);
+        }
+    }
+
+    private function updateCollectibles(dt:Float):Void {
+        for (c in collectibles) {
+            if (c.collected) continue;
+
+            var hit = (hero.x < c.x + c.width) &&
+                  (hero.x + hero.width > c.x) &&
+                  (hero.y < c.y + c.height) &&
+                  (hero.y + hero.height > c.y);
+
+            if (hit) {
+                c.collected = true;
+                score++;
+                world.removeChild(c.quad);
+                c.quad = null;
+            
+                Browser.console.log("Collected coin! Score: " + score);
+            }
         }
     }
 }
