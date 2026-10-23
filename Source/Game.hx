@@ -27,6 +27,13 @@ typedef Platform = {
     var height:Float;
 }
 
+enum CollectibleType {
+    Coin;
+    Resource;
+    Health;
+    Item;
+}
+
 typedef Collectible = {
     var x:Float;
     var y:Float;
@@ -34,6 +41,8 @@ typedef Collectible = {
     var height:Float;
     var collected:Bool;
     var quad:starling.display.Quad;
+    var type:CollectibleType;
+    var itemId:String;
 }
 
 class Game extends Sprite {
@@ -78,6 +87,8 @@ class Game extends Sprite {
 
     private var collectibles:Array<Collectible> = [];
     private var score:Int = 0;
+
+    private var inventory:Array<String> = [];
 
     public function new() {
         super();
@@ -468,13 +479,14 @@ class Game extends Sprite {
 
     private function initCollectibles():Void {
         collectibles = [
-            { x: 230, y: 640, width: 20, height: 20, collected: false, quad: null },
-            { x: 610, y: 490, width: 20, height: 20, collected: false, quad: null },
-            { x: 290, y: 340, width: 20, height: 20, collected: false, quad: null }
+            { x: 230, y: 640, width: 20, height: 20, collected: false, quad: null, type: Coin, itemId: "score" },
+            { x: 610, y: 490, width: 20, height: 20, collected: false, quad: null, type: Coin, itemId: "score" },
+            { x: 290, y: 340, width: 20, height: 20, collected: false, quad: null, type: Item, itemId: "equipment" }
         ];
 
         for (c in collectibles) {
-            var quad = new starling.display.Quad(c.width, c.height, 0xFFD700);
+	    var color = (c.type == Item) ? 0x00FFFF : 0xFFD700;
+            var quad = new starling.display.Quad(c.width, c.height, color);
             quad.x = c.x;
             quad.y = c.y;
             c.quad = quad;
@@ -493,11 +505,24 @@ class Game extends Sprite {
 
             if (hit) {
                 c.collected = true;
-                score++;
                 world.removeChild(c.quad);
                 c.quad = null;
             
-                Browser.console.log("Collected coin! Score: " + score);
+                switch (c.type) {
+                    case Coin:
+                        score++;
+                        Browser.console.log("Collected Coin! Score: " + score);
+                    case Health:
+                        Browser.console.log("Restored health!");
+
+                    case Item:
+                        inventory.push(c.itemId);
+			inventory.push(c.itemId);
+                        Browser.console.log("Equipped item: " + c.itemId);
+
+		    case Resource:
+                        Browser.console.log("Collected resource: " + c.itemId);
+                }
             }
         }
     }
