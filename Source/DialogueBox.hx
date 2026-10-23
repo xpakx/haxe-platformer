@@ -15,6 +15,12 @@ class DialogueBox extends Sprite {
     private var dialogueQueue:Array<{ speaker: String, text: String }> = [];
     private var currentIndex:Int = 0;
     
+    private var fullText:String = "";
+    private var displayedCharCount:Int = 0;
+    private var timer:Float = 0;
+    private var textSpeed:Float = 0.03;
+    private var isTyping:Bool = false;
+
     public var onComplete:Void->Void;
 
     public function new(stageWidth:Float, stageHeight:Float) {
@@ -76,18 +82,40 @@ class DialogueBox extends Sprite {
 
         var line = dialogueQueue[currentIndex];
         nameField.text = line.speaker;
-        textField.text = line.text;
+        fullText = line.text;
+        displayedCharCount = 0;
+        textField.text = "";
+        isTyping = true;
+        timer = 0;
     }
 
     public function update(dt:Float):Void {
+        if (!visible || !isTyping) return;
+
+        timer += dt;
+        if (timer >= textSpeed) {
+            timer = 0;
+            displayedCharCount++;
+            textField.text = fullText.substr(0, displayedCharCount);
+
+            if (displayedCharCount >= fullText.length) {
+                isTyping = false;
+            }
+        }
     }
 
     public function handleInput(keyCode:Int):Void {
         if (!visible) return;
 
         if (keyCode == Keyboard.SPACE || keyCode == Keyboard.ENTER) {
-            currentIndex++;
-            showCurrentLine();
+            if (isTyping) {
+                isTyping = false;
+                displayedCharCount = fullText.length;
+                textField.text = fullText;
+            } else {
+                currentIndex++;
+                showCurrentLine();
+            }
         }
     }
 
