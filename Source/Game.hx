@@ -27,6 +27,15 @@ typedef Platform = {
     var height:Float;
 }
 
+typedef Collectible = {
+    var x:Float;
+    var y:Float;
+    var width:Float;
+    var height:Float;
+    var collected:Bool;
+    var quad:starling.display.Quad;
+}
+
 class Game extends Sprite {
     private var hero:TestCharacter;
     private var leftPressed:Bool = false;
@@ -67,6 +76,9 @@ class Game extends Sprite {
     private var dialogueBox:DialogueBox;
     private var isDialogueActive:Bool = false;
 
+    private var collectibles:Array<Collectible> = [];
+    private var score:Int = 0;
+
     public function new() {
         super();
         addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
@@ -88,6 +100,7 @@ class Game extends Sprite {
 	switchState(state);
 
 	initPlatforms();
+	initCollectibles();
 	world.addChild(hero);
         camera.setTarget(hero);
 	camera.snapToTarget();
@@ -450,6 +463,22 @@ class Game extends Sprite {
             { speaker: "Test", text: "test test test test" },
             { speaker: "Hero", text: "test test tst test test test" }
         ]);
+    }
+
+    private function initCollectibles():Void {
+        collectibles = [
+            { x: 230, y: 640, width: 20, height: 20, collected: false, quad: null },
+            { x: 610, y: 490, width: 20, height: 20, collected: false, quad: null },
+            { x: 290, y: 340, width: 20, height: 20, collected: false, quad: null }
+        ];
+
+        for (c in collectibles) {
+            var quad = new starling.display.Quad(c.width, c.height, 0xFFD700);
+            quad.x = c.x;
+            quad.y = c.y;
+            c.quad = quad;
+            world.addChild(quad);
+        }
     }
 }
 
