@@ -453,11 +453,20 @@ class Game extends Sprite {
 
         var hitPlatform:Platform = null;
         for (p in platforms) {
-            if (chestX >= p.x && chestX <= p.x + p.width &&
-                chestY >= p.y && chestY <= p.y + p.height) {
-                hitPlatform = p;
-                break;
-            }
+	    if (chestY < p.y || chestY > p.y + p.height) {
+	        continue;
+	    }
+	    if (facingDir < 0) {
+	        if (chestX >= p.x + p.width && chestX <= p.x + p.width + hero.width) {
+			hitPlatform = p;
+			break;
+		}
+	    } else {
+	        if (chestX <= p.x && chestX >= p.x - hero.width) {
+			hitPlatform = p;
+			break;
+		}
+	    }
         }
 
         if (hitPlatform == null) return false;
