@@ -88,7 +88,7 @@ class Game extends Sprite {
     private var collectibles:Array<Collectible> = [];
     private var score:Int = 0;
 
-    private var inventory:Array<String> = [];
+    private var inventory:Inventory;
 
     public function new() {
         super();
@@ -127,6 +127,7 @@ class Game extends Sprite {
             isDialogueActive = false;
         };
         addChild(dialogueBox);
+	inventory = new Inventory();
     }
 
 
@@ -535,8 +536,7 @@ class Game extends Sprite {
                         Browser.console.log("Restored health!");
 
                     case Item:
-                        inventory.push(c.itemId);
-			inventory.push(c.itemId);
+                        inventory.add(c.itemId);
                         Browser.console.log("Equipped item: " + c.itemId);
 
 		    case Resource:
