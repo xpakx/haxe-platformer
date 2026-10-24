@@ -471,7 +471,17 @@ class Game extends Sprite {
 
         if (hitPlatform == null) return false;
 
-	// TODO: check if there is a space for hero
+        var headY = hitPlatform.y - hero.height;
+        var headX = hero.x + (facingDir * 10);
+
+        for (p in platforms) {
+            if (p == hitPlatform) continue;
+            if (headX + hero.width > p.x && headX < p.x + p.width &&
+                headY + hero.height > p.y && headY < p.y + p.height) {
+                return false;
+            }
+        }    
+
 
         return true;
     }
