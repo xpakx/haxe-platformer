@@ -32,4 +32,28 @@ class Inventory {
     public function unequip(slot:EquipmentSlot):Void {
         equipment.remove(slot);
     }
+
+    public function equipFromInventory(index:Int, slot:EquipmentSlot):Bool {
+        if (index < 0 || index >= items.length) return false;
+        var itemId = items[index];
+
+        var oldItem = equipment.get(slot);
+        if (oldItem != null) {
+            items[index] = oldItem;
+        } else {
+            items.splice(index, 1);
+        }
+
+        equipment.set(slot, itemId);
+        return true;
+    }
+
+    public function unequipToInventory(slot:EquipmentSlot):Bool {
+        var itemId = equipment.get(slot);
+        if (itemId == null) return false;
+
+        items.push(itemId);
+        equipment.remove(slot);
+        return true;
+    }
 }
