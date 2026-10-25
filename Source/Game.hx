@@ -501,7 +501,7 @@ class Game extends Sprite {
         collectibles = [
             { x: 230, y: 640, width: 20, height: 20, collected: false, quad: null, type: Coin, itemId: "score" },
             { x: 610, y: 490, width: 20, height: 20, collected: false, quad: null, type: Coin, itemId: "score" },
-            { x: 290, y: 340, width: 20, height: 20, collected: false, quad: null, type: Item, itemId: "equipment" }
+            { x: 290, y: 340, width: 20, height: 20, collected: false, quad: null, type: Item, itemId: "speed_boots" }
         ];
 
         for (c in collectibles) {
@@ -537,7 +537,6 @@ class Game extends Sprite {
 
                     case Item:
                         inventory.add(c.itemId);
-                        Browser.console.log("Equipped item: " + c.itemId);
 
 		    case Resource:
                         Browser.console.log("Collected resource: " + c.itemId);

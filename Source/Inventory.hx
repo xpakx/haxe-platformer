@@ -1,5 +1,7 @@
 package;
 
+import js.Browser;
+
 class Inventory {
     private var items:Array<String> = [];
     private var equipment:Map<EquipmentSlot, String> = new Map();
@@ -17,6 +19,8 @@ class Inventory {
         if (data == null) {
             return;
         }
+
+        Browser.console.log("Equipped item: " + data.name);
         items.push(itemId);
     }
 
