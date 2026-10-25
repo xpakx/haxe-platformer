@@ -21,6 +21,7 @@ class Inventory {
         }
 
         Browser.console.log("Equipped item: " + data.name);
+        Browser.console.log("Rarity: " + data.rarity);
         items.push(itemId);
     }
 

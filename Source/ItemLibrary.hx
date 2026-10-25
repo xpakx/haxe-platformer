@@ -7,6 +7,14 @@ enum StatType {
     Speed;
 }
 
+enum ItemRarity {
+    Common;
+    Uncommon;
+    Rare;
+    Epic;
+    Legendary;
+}
+
 class StatModifier {
     public var stat:StatType;
     public var value:Float;
@@ -25,13 +33,15 @@ class ItemData {
     public var description:String;
     public var slot:Null<EquipmentSlot>;
     public var effects:Array<StatModifier>;
+    public var rarity:ItemRarity;
 
-    public function new(id:String, name:String, description:String, ?slot:EquipmentSlot, ?effects:Array<StatModifier>) {
+    public function new(id:String, name:String, description:String, ?slot:EquipmentSlot, ?effects:Array<StatModifier>, ?rarity:ItemRarity) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.slot = slot;
         this.effects = effects != null ? effects : [];
+	this.rarity = rarity != null ? rarity : Common;
     }
 }
 
