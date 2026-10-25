@@ -10,6 +10,8 @@ class Inventory {
     private var armor:String;
     private var boots:String;
 
+    public var doubleJumpUnlocked:Bool = false;
+
     public function new() {
         ItemLibrary.init();
     }
@@ -53,6 +55,8 @@ class Inventory {
         }
 
         equipment.set(slot, itemId);
+	this.doubleJumpUnlocked = doesItemsProvideEffect(DoubleJumpAbility);
+
         return true;
     }
 
@@ -62,6 +66,21 @@ class Inventory {
 
         items.push(itemId);
         equipment.remove(slot);
+	this.doubleJumpUnlocked = doesItemsProvideEffect(DoubleJumpAbility);
         return true;
+    }
+
+    public function doesItemsProvideEffect(effect:SpecialEffect):Bool {
+        for (itemId in equipment) {
+            var data = ItemLibrary.get(itemId);
+            if (data == null) continue; 
+            for (itemEffect in data.special) {
+                if (itemEffect == effect) {
+                    return true;
+                }
+            }
+           
+        }
+        return false; 
     }
 }

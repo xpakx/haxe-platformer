@@ -1,0 +1,6 @@
+package;
+
+enum SpecialEffect {
+    DoubleJumpAbility;
+}
+

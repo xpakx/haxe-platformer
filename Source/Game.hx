@@ -65,7 +65,6 @@ class Game extends Sprite {
     private static inline var GRAVITY_FALL:Float = 2600.0;
 
     private static inline var DOUBLE_JUMP_STRENGTH:Float = -650.0;
-    private var doubleJumpUnlocked:Bool = false;
     private var canDoubleJump:Bool = false;
 
     private var state:State = Fall;
@@ -165,9 +164,6 @@ class Game extends Sprite {
 	       spaceJustPressed = false;
 	    }
 	    spacePressed = true;
-	}
-        if (e.keyCode == Keyboard.J) {
-	    doubleJumpUnlocked = !doubleJumpUnlocked;
 	}
         if (e.keyCode == Keyboard.T) {
 	    dialogueTest();
@@ -394,7 +390,7 @@ class Game extends Sprite {
 	    case Jump:
 	       return true;
 	    case DoubleJump:
-	       return doubleJumpUnlocked && canDoubleJump;
+	       return inventory.doubleJumpUnlocked && canDoubleJump;
 	    case FloatState:
 	       return floatCooldown <= 0.0 && canFloat;
 	}
@@ -537,6 +533,7 @@ class Game extends Sprite {
 
                     case Item:
                         inventory.add(c.itemId);
+			inventory.equipFromInventory(0, Boots);
 
 		    case Resource:
                         Browser.console.log("Collected resource: " + c.itemId);
