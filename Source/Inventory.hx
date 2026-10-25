@@ -1,11 +1,5 @@
 package;
 
-enum EquipmentSlot {
-    Head;
-    Armor;
-    Boots;
-}
-
 class Inventory {
     private var items:Array<String> = [];
     private var equipment:Map<EquipmentSlot, String> = new Map();
@@ -15,9 +9,14 @@ class Inventory {
     private var boots:String;
 
     public function new() {
+        ItemLibrary.init();
     }
 
     public function add(itemId:String):Void {
+	var data = ItemLibrary.get(itemId);
+        if (data == null) {
+            return;
+        }
         items.push(itemId);
     }
 
@@ -36,6 +35,10 @@ class Inventory {
     public function equipFromInventory(index:Int, slot:EquipmentSlot):Bool {
         if (index < 0 || index >= items.length) return false;
         var itemId = items[index];
+        var itemData = ItemLibrary.get(itemId);
+        if (itemData == null || itemData.slot != slot) {
+            return false; 
+        }
 
         var oldItem = equipment.get(slot);
         if (oldItem != null) {
