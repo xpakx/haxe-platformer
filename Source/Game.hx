@@ -392,7 +392,7 @@ class Game extends Sprite {
 	    case DoubleJump:
 	       return inventory.doubleJumpUnlocked && canDoubleJump;
 	    case FloatState:
-	       return floatCooldown <= 0.0 && canFloat;
+	       return inventory.floatUnlocked && floatCooldown <= 0.0 && canFloat;
 	}
     }
 
@@ -497,7 +497,8 @@ class Game extends Sprite {
         collectibles = [
             { x: 230, y: 640, width: 20, height: 20, collected: false, quad: null, type: Coin, itemId: "score" },
             { x: 610, y: 490, width: 20, height: 20, collected: false, quad: null, type: Coin, itemId: "score" },
-            { x: 290, y: 340, width: 20, height: 20, collected: false, quad: null, type: Item, itemId: "speed_boots" }
+            { x: 290, y: 340, width: 20, height: 20, collected: false, quad: null, type: Item, itemId: "speed_boots" },
+            { x: 290, y: 640, width: 20, height: 20, collected: false, quad: null, type: Item, itemId: "cape" }
         ];
 
         for (c in collectibles) {
@@ -534,6 +535,7 @@ class Game extends Sprite {
                     case Item:
                         inventory.add(c.itemId);
 			inventory.equipFromInventory(0, Boots);
+			inventory.equipFromInventory(0, Armor);
 
 		    case Resource:
                         Browser.console.log("Collected resource: " + c.itemId);

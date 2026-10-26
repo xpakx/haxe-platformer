@@ -75,6 +75,12 @@ class ItemLibrary {
 	[DoubleJumpAbility],
 	));
 
+        register(new ItemData("cape", "Cape", "Test", EquipmentSlot.Armor,
+	[],
+	Common,
+	[FloatAbility],
+	));
+
 
         initialized = true;
     }

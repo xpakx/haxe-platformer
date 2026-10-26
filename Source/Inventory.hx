@@ -11,6 +11,7 @@ class Inventory {
     private var boots:String;
 
     public var doubleJumpUnlocked:Bool = false;
+    public var floatUnlocked:Bool = false;
 
     public function new() {
         ItemLibrary.init();
@@ -56,6 +57,7 @@ class Inventory {
 
         equipment.set(slot, itemId);
 	this.doubleJumpUnlocked = doesItemsProvideEffect(DoubleJumpAbility);
+	this.floatUnlocked = doesItemsProvideEffect(FloatAbility);
 
         return true;
     }
@@ -67,6 +69,7 @@ class Inventory {
         items.push(itemId);
         equipment.remove(slot);
 	this.doubleJumpUnlocked = doesItemsProvideEffect(DoubleJumpAbility);
+	this.floatUnlocked = doesItemsProvideEffect(FloatAbility);
         return true;
     }
 
