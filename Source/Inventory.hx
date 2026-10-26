@@ -53,15 +53,28 @@ class Inventory {
 
         equipment.set(slot, itemId);
 
-	if (itemData.special != null) {
-		for (itemEffect in itemData.special) {
-		   var val = effectProvidersCount.getOrSet(itemEffect, 0); 
-		   val += 1;
-		   effectProvidersCount.set(itemEffect, val); 
-		}
-	}
+	addEffectProvider(itemData);
 
         return true;
+    }
+
+    private function addEffectProvider(itemData:ItemData):Void {
+        if (itemData.special == null) return;
+	for (itemEffect in itemData.special) {
+	    var val = effectProvidersCount.getOrSet(itemEffect, 0); 
+	    val += 1;
+	    effectProvidersCount.set(itemEffect, val); 
+	}
+    }
+
+    private function removeEffectProvider(itemData:ItemData):Void {
+        if (itemData.special == null) return;
+	for (itemEffect in itemData.special) {
+            var val = effectProvidersCount.getOrSet(itemEffect, 0); 
+	    val -= 1;
+	    if (val < 0) val = 0;
+	    effectProvidersCount.set(itemEffect, val); 
+	}
     }
 
     public function unequipToInventory(slot:EquipmentSlot):Bool {
@@ -72,14 +85,7 @@ class Inventory {
         equipment.remove(slot);
 
         var itemData = ItemLibrary.get(itemId);
-	if (itemData.special != null) {
-	   for (itemEffect in itemData.special) {
-               var val = effectProvidersCount.getOrSet(itemEffect, 0); 
-	       val -= 1;
-	       if (val < 0) val = 0;
-	       effectProvidersCount.set(itemEffect, val); 
-	   }
-	}
+	removeEffectProvider(itemData);
 
         return true;
     }
