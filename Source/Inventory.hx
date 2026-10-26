@@ -1,6 +1,7 @@
 package;
 
 import js.Browser;
+using DefaultMap;
 
 class Inventory {
     private var items:Array<String> = [];
@@ -12,6 +13,7 @@ class Inventory {
 
     public var doubleJumpUnlocked:Bool = false;
     public var floatUnlocked:Bool = false;
+    public var effectProvidersCount: Map<SpecialEffect, Int> = new Map();
 
     public function new() {
         ItemLibrary.init();
@@ -56,8 +58,14 @@ class Inventory {
         }
 
         equipment.set(slot, itemId);
-	this.doubleJumpUnlocked = doesItemsProvideEffect(DoubleJumpAbility);
-	this.floatUnlocked = doesItemsProvideEffect(FloatAbility);
+
+	if (itemData.special != null) {
+		for (itemEffect in itemData.special) {
+		   var val = effectProvidersCount.getOrSet(itemEffect, 0); 
+		   val += 1;
+		   effectProvidersCount.set(itemEffect, val); 
+		}
+	}
 
         return true;
     }
@@ -68,8 +76,17 @@ class Inventory {
 
         items.push(itemId);
         equipment.remove(slot);
-	this.doubleJumpUnlocked = doesItemsProvideEffect(DoubleJumpAbility);
-	this.floatUnlocked = doesItemsProvideEffect(FloatAbility);
+
+        var itemData = ItemLibrary.get(itemId);
+	if (itemData.special != null) {
+	   for (itemEffect in itemData.special) {
+               var val = effectProvidersCount.getOrSet(itemEffect, 0); 
+	       val -= 1;
+	       if (val < 0) val = 0;
+	       effectProvidersCount.set(itemEffect, val); 
+	   }
+	}
+
         return true;
     }
 
@@ -85,5 +102,10 @@ class Inventory {
            
         }
         return false; 
+    }
+
+    public function hasEffect(effect: SpecialEffect): Bool {
+        var count = effectProvidersCount.get(effect);
+        return count != null && count > 0;
     }
 }

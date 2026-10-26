@@ -390,9 +390,9 @@ class Game extends Sprite {
 	    case Jump:
 	       return true;
 	    case DoubleJump:
-	       return inventory.doubleJumpUnlocked && canDoubleJump;
+	       return inventory.hasEffect(DoubleJumpAbility) && canDoubleJump;
 	    case FloatState:
-	       return inventory.floatUnlocked && floatCooldown <= 0.0 && canFloat;
+	       return inventory.hasEffect(FloatAbility) && floatCooldown <= 0.0 && canFloat;
 	}
     }
 
