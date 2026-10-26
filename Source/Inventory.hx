@@ -7,12 +7,6 @@ class Inventory {
     private var items:Array<String> = [];
     private var equipment:Map<EquipmentSlot, String> = new Map();
 
-    private var head:String;
-    private var armor:String;
-    private var boots:String;
-
-    public var doubleJumpUnlocked:Bool = false;
-    public var floatUnlocked:Bool = false;
     public var effectProvidersCount: Map<SpecialEffect, Int> = new Map();
 
     public function new() {
@@ -88,20 +82,6 @@ class Inventory {
 	}
 
         return true;
-    }
-
-    public function doesItemsProvideEffect(effect:SpecialEffect):Bool {
-        for (itemId in equipment) {
-            var data = ItemLibrary.get(itemId);
-            if (data == null) continue; 
-            for (itemEffect in data.special) {
-                if (itemEffect == effect) {
-                    return true;
-                }
-            }
-           
-        }
-        return false; 
     }
 
     public function hasEffect(effect: SpecialEffect): Bool {
