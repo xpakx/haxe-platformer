@@ -70,7 +70,7 @@ class Game extends Sprite {
     private static inline var GRAVITY_FLOAT:Float = 200.0;
     private var canFloat:Bool = true;
 
-    private var jumpSound:Sound;
+    private var soundManager:SoundManager;
 
     private var world:Sprite;
     private var camera:Camera2D;
@@ -112,7 +112,8 @@ class Game extends Sprite {
         stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
         stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
-	initSounds();
+	soundManager = new SoundManager();
+	soundManager.initSounds();
 
 
         dialogueBox = new DialogueBox(stage.stageWidth, stage.stageHeight);
@@ -238,7 +239,7 @@ class Game extends Sprite {
 	    case Floor:
 	       hero.endRun();
 	    case Jump:
-	       jumpSound.play(0, 0);
+	       soundManager.play("jump");
 	       canDoubleJump = true;
 	       jumpTime = 0.0;
 	       vy = JUMP_STRENGTH;
@@ -399,10 +400,6 @@ class Game extends Sprite {
             switchState(Fall);
 	    movement.floatCooldown = 0.2;
         }
-    }
-
-    private function initSounds():Void {
-        jumpSound = Assets.getSound("audio/jump.ogg");
     }
 
     private function detectLedge():Bool {
