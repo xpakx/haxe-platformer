@@ -48,12 +48,6 @@ typedef Collectible = {
 class Game extends Sprite {
     private var movement:MovementLogic;
     private var hero:TestCharacter;
-    private var leftPressed:Bool = false;
-    private var rightPressed:Bool = false;
-    private var vx:Float = 0.0;
-    private static inline var ACCELERATION:Float = 4500.0;
-    private static inline var MAX_SPEED:Float = 500.0;
-    private static inline var FRICTION:Float = 14.0;
 
 
     private static inline var MAX_JUMP_TIME:Float = 0.7;
@@ -106,7 +100,7 @@ class Game extends Sprite {
 	hero.y = stage.stageHeight - 1000;
 	hero.scaleX = 0.5;
 	hero.scaleY = 0.5;
-	movement = new MovementLogic();
+	movement = new MovementLogic(hero.x, hero.y, hero.width, stage.stageWidth);
 
 	switchState(state);
 
@@ -153,10 +147,10 @@ class Game extends Sprite {
             return;
         }
         if (e.keyCode == Keyboard.LEFT || e.keyCode == Keyboard.A) {
-	    leftPressed = true;
+	    movement.leftPressed = true;
 	} 
         if (e.keyCode == Keyboard.RIGHT || e.keyCode == Keyboard.D) {
-	    rightPressed = true;
+	    movement.rightPressed = true;
 	}
         if (e.keyCode == Keyboard.SPACE) {
 	    if (!spacePressed) {
@@ -173,10 +167,10 @@ class Game extends Sprite {
 
     private function onKeyUp(e:KeyboardEvent):Void {
         if (e.keyCode == Keyboard.LEFT || e.keyCode == Keyboard.A) {
-	    leftPressed = false;
+	    movement.leftPressed = false;
 	} 
         if (e.keyCode == Keyboard.RIGHT || e.keyCode == Keyboard.D) {
-	    rightPressed = false;
+	    movement.rightPressed = false;
 	}
         if (e.keyCode == Keyboard.SPACE) {
 	    spacePressed = false;
@@ -221,6 +215,14 @@ class Game extends Sprite {
 	       float(dt);
 	       move(dt);
 	}
+    }
+
+    // TODO
+    private function move(dt:Float):Bool {
+        var result = movement.move(dt);
+	hero.x = movement.x;
+	hero.scaleX = movement.scaleX;
+	return result;
     }
 
 
@@ -330,40 +332,6 @@ class Game extends Sprite {
 	if (vy >= 0) {
 	    switchState(Fall);
 	}
-    }
-
-    private function move(dt:Float):Bool {
-        var moveDir:Float = 0.0;
-	var moved:Bool = false;
-        if (leftPressed) moveDir -= 1.0;
-        if (rightPressed) moveDir += 1.0;
-
-        if (moveDir != 0.0) {
-            vx += moveDir * ACCELERATION * dt;
-	    moved = true;
-        } else {
-            vx -= vx * FRICTION * dt;
-        }
-
-        if (vx > MAX_SPEED) vx = MAX_SPEED;
-        if (vx < -MAX_SPEED) vx = -MAX_SPEED;
-	if (vx < 0) {
-		hero.scaleX = -0.5; 
-	} else {
-		hero.scaleX = 0.5; 
-	}
-
-        hero.x += vx * dt;
-
-        if (hero.x < 0) {
-            hero.x = 0;
-	    vx = 0;
-        } else if (hero.x + hero.width > stage.stageWidth) {
-            hero.x = stage.stageWidth - hero.width;
-	    vx = 0;
-        }
-
-	return moved;
     }
 
     public function isOnFloor():Bool {
