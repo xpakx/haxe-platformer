@@ -46,6 +46,7 @@ typedef Collectible = {
 }
 
 class Game extends Sprite {
+    private var movement:MovementLogic;
     private var hero:TestCharacter;
     private var leftPressed:Bool = false;
     private var rightPressed:Bool = false;
@@ -74,7 +75,6 @@ class Game extends Sprite {
 
     private static inline var GRAVITY_FLOAT:Float = 200.0;
     private var canFloat:Bool = true;
-    private var floatCooldown:Float = 0.0;
 
     private var jumpSound:Sound;
 
@@ -106,6 +106,7 @@ class Game extends Sprite {
 	hero.y = stage.stageHeight - 1000;
 	hero.scaleX = 0.5;
 	hero.scaleY = 0.5;
+	movement = new MovementLogic();
 
 	switchState(state);
 
@@ -187,7 +188,7 @@ class Game extends Sprite {
         if (isDialogueActive) {
             dialogueBox.update(e.passedTime);
         }
-        updateTimers(e.passedTime);
+        movement.updateTimers(e.passedTime);
         updateChar(e.passedTime);
         camera.update(e.passedTime);
 	updateCollectibles(e.passedTime);
@@ -392,7 +393,7 @@ class Game extends Sprite {
 	    case DoubleJump:
 	       return inventory.hasEffect(DoubleJumpAbility) && canDoubleJump;
 	    case FloatState:
-	       return inventory.hasEffect(FloatAbility) && floatCooldown <= 0.0 && canFloat;
+	       return inventory.hasEffect(FloatAbility) && movement.floatCooldown <= 0.0 && canFloat;
 	}
     }
 
@@ -428,14 +429,8 @@ class Game extends Sprite {
 
         if (!spacePressed) {
             switchState(Fall);
-	    floatCooldown = 0.2;
+	    movement.floatCooldown = 0.2;
         }
-    }
-
-    private function updateTimers(dt:Float):Void {
-        if (floatCooldown > 0.0) {
-	    floatCooldown -= dt;
-	}
     }
 
     private function initSounds():Void {
