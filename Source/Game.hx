@@ -11,6 +11,10 @@ import openfl.utils.Assets;
 
 import js.Browser;
 
+import collectible.Collectible;
+import collectible.CollectibleType;
+import platform.Platform;
+
 
 enum State {
    Fall;
@@ -20,30 +24,7 @@ enum State {
    FloatState;
 }
 
-typedef Platform = {
-    var x:Float;
-    var y:Float;
-    var width:Float;
-    var height:Float;
-}
 
-enum CollectibleType {
-    Coin;
-    Resource;
-    Health;
-    Item;
-}
-
-typedef Collectible = {
-    var x:Float;
-    var y:Float;
-    var width:Float;
-    var height:Float;
-    var collected:Bool;
-    var quad:starling.display.Quad;
-    var type:CollectibleType;
-    var itemId:String;
-}
 
 class Game extends Sprite {
     private var movement:MovementLogic;
