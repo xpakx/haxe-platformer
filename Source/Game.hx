@@ -14,22 +14,12 @@ import js.Browser;
 import collectible.Collectible;
 import collectible.CollectibleType;
 import platform.Platform;
-
-
-enum State {
-   Fall;
-   Floor;
-   Jump;
-   DoubleJump;
-   FloatState;
-}
-
-
+import movement.MovementLogic;
+import movement.State;
 
 class Game extends Sprite {
     private var movement:MovementLogic;
     private var hero:TestCharacter;
-
 
     private static inline var MAX_JUMP_TIME:Float = 0.7;
     private var spacePressed:Bool = false;
