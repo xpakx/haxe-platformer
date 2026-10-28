@@ -1,5 +1,7 @@
 package movement;
 
+import platform.Platform;
+
 
 class MovementLogic {
     public var floatCooldown:Float = 0.0;
@@ -7,6 +9,7 @@ class MovementLogic {
     public var x:Float;
     public var y:Float;
     public var width:Float;
+    public var height:Float;
     public var scaleX:Float = 0.5;
     public var stageWidth:Float;
 
@@ -39,12 +42,14 @@ class MovementLogic {
     public var onStartFloat: Void -> Void;
     public var onEndRun: Void -> Void;
     public var isUnlocked: State -> Bool;
+    public var getLandedPlatform: (x:Float, y:Float, width:Float, height:Float, nextX: Float, nextY: Float) -> Platform;
     public var soundManager: SoundManager;
 
-    public function new(x:Float, y:Float, width:Float, stageWidth:Float) {
+    public function new(x:Float, y:Float, width:Float, height:Float, stageWidth:Float) {
         this.x = x;
         this.y = y;
         this.width = width;
+        this.height = height;
         this.stageWidth = stageWidth;
 
     }
@@ -140,5 +145,35 @@ class MovementLogic {
 	       vy = 0.0;
 	       onStartFloat();
 	}
+    }
+
+    public function fall(dt:Float):Void {
+	vy += GRAVITY_FALL * dt;
+	var nextY = y + vy * dt;
+
+	var landedPlatform:Platform = getLandedPlatform(
+	    x, y, width, height, x, nextY
+        );
+
+        if (landedPlatform != null) {
+	    y = landedPlatform.y - height;
+	    switchState(Floor);
+	    vy = 0;
+	    return;
+	}
+        y = nextY;
+
+        if (y > 900) {
+            y = 900;
+            switchState(Floor);
+            vy = 0;
+        }
+
+        if (spaceJustPressed) {
+            switchState(DoubleJump);
+	    if (state == Fall) {
+	        switchState(FloatState);
+	    }
+        } 
     }
 }

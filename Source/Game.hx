@@ -22,7 +22,6 @@ class Game extends Sprite {
     private var hero:TestCharacter;
 
 
-
     private var platforms:Array<Platform> = [];
 
 
@@ -59,13 +58,14 @@ class Game extends Sprite {
 	hero.y = stage.stageHeight - 1000;
 	hero.scaleX = 0.5;
 	hero.scaleY = 0.5;
-	movement = new MovementLogic(hero.x, hero.y, hero.width, stage.stageWidth);
+	movement = new MovementLogic(hero.x, hero.y, hero.width, hero.height, stage.stageWidth);
 	movement.onStartFall = hero.startFall;
 	movement.onStartJump = hero.startJump;
 	movement.onStartDoubleJump = hero.startDoubleJump;
 	movement.onStartFloat = hero.startFloat;
 	movement.onEndRun = hero.startRun;
 	movement.isUnlocked = this.stateIsUnlocked;
+	movement.getLandedPlatform = this.getLandedPlatform;
 
 	movement.switchState(movement.state);
 
@@ -159,8 +159,8 @@ class Game extends Sprite {
         movement.y = hero.y;
         switch(movement.state) {
 	    case Fall:
-	       fall(dt);
-	       movement.y = hero.y;
+	       movement.fall(dt);
+	       hero.y = movement.y;
 	       move(dt);
 	    case Floor:
 	       if (move(dt)) {
@@ -218,37 +218,6 @@ class Game extends Sprite {
             }
 	}
 	return null;
-    }
-
-
-    private function fall(dt:Float):Void {
-	movement.vy += MovementLogic.GRAVITY_FALL * dt;
-	var nextY = hero.y + movement.vy * dt;
-
-	var landedPlatform:Platform = getLandedPlatform(
-	    hero.x, hero.y, hero.width, hero.height, hero.x, nextY
-        );
-
-        if (landedPlatform != null) {
-	    hero.y = landedPlatform.y - hero.height;
-	    movement.switchState(Floor);
-	    movement.vy = 0;
-	    return;
-	}
-        hero.y = nextY;
-
-        if (hero.y > 900) {
-            hero.y = 900;
-            movement.switchState(Floor);
-            movement.vy = 0;
-        }
-
-        if (movement.spaceJustPressed) {
-            movement.switchState(DoubleJump);
-	    if (movement.state == Fall) {
-	        movement.switchState(FloatState);
-	    }
-        } 
     }
 
     private function doubleJump(dt:Float):Void {
