@@ -33,7 +33,6 @@ class Game extends Sprite {
     private static inline var DOUBLE_JUMP_STRENGTH:Float = -650.0;
     private var canDoubleJump:Bool = false;
 
-    private var state:State = Fall;
 
     private var platforms:Array<Platform> = [];
 
@@ -73,7 +72,7 @@ class Game extends Sprite {
 	hero.scaleY = 0.5;
 	movement = new MovementLogic(hero.x, hero.y, hero.width, stage.stageWidth);
 
-	switchState(state);
+	switchState(movement.state);
 
 	initPlatforms();
 	initCollectibles();
@@ -161,7 +160,7 @@ class Game extends Sprite {
     }
 
     private function updateChar(dt:Float):Void {
-        switch(state) {
+        switch(movement.state) {
 	    case Fall:
 	       fall(dt);
 	       move(dt);
@@ -202,7 +201,7 @@ class Game extends Sprite {
         if (!stateIsUnlocked(newState)) {
 	    return;
 	}
-        state = newState;
+        movement.state = newState;
 
         switch(newState) {
 	    case Fall:
@@ -262,7 +261,7 @@ class Game extends Sprite {
 
         if (spaceJustPressed) {
             switchState(DoubleJump);
-	    if (state == Fall) {
+	    if (movement.state == Fall) {
 	        switchState(FloatState);
 	    }
         } 

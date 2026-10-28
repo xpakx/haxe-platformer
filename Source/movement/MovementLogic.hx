@@ -18,6 +18,8 @@ class MovementLogic {
     public var leftPressed:Bool = false;
     public var rightPressed:Bool = false;
 
+    public var state:State = Fall;
+
 
     public function new(x:Float, y:Float, width:Float, stageWidth:Float) {
         this.x = x;
