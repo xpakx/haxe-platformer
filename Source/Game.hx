@@ -21,8 +21,6 @@ class Game extends Sprite {
     private var movement:MovementLogic;
     private var hero:TestCharacter;
 
-    private static inline var DOUBLE_JUMP_STRENGTH:Float = -650.0;
-    private var canDoubleJump:Bool = false;
 
 
     private var platforms:Array<Platform> = [];
@@ -62,8 +60,14 @@ class Game extends Sprite {
 	hero.scaleX = 0.5;
 	hero.scaleY = 0.5;
 	movement = new MovementLogic(hero.x, hero.y, hero.width, stage.stageWidth);
+	movement.onStartFall = hero.startFall;
+	movement.onStartJump = hero.startJump;
+	movement.onStartDoubleJump = hero.startDoubleJump;
+	movement.onStartFloat = hero.startFloat;
+	movement.onEndRun = hero.startRun;
+	movement.isUnlocked = this.stateIsUnlocked;
 
-	switchState(movement.state);
+	movement.switchState(movement.state);
 
 	initPlatforms();
 	initCollectibles();
@@ -75,6 +79,7 @@ class Game extends Sprite {
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
 	soundManager = new SoundManager();
 	soundManager.initSounds();
+	movement.soundManager = soundManager;
 
 
         dialogueBox = new DialogueBox(stage.stageWidth, stage.stageHeight);
@@ -155,6 +160,7 @@ class Game extends Sprite {
         switch(movement.state) {
 	    case Fall:
 	       fall(dt);
+	       movement.y = hero.y;
 	       move(dt);
 	    case Floor:
 	       if (move(dt)) {
@@ -163,18 +169,20 @@ class Game extends Sprite {
 	           hero.endRun();
 	       }
 	       if (!isOnFloor()) {
-		       switchState(Fall);
+		       movement.switchState(Fall);
 	       }
 	       if (movement.spacePressed) {
-	          switchState(Jump);
+	          movement.switchState(Jump);
 	       }
 	    case Jump:
 	       jump(dt);
 	    case DoubleJump:
 	       doubleJump(dt);
+	       movement.y = hero.y;
 	       move(dt);
 	    case FloatState:
 	       float(dt);
+	       movement.y = hero.y;
 	       move(dt);
 	}
     }
@@ -189,41 +197,13 @@ class Game extends Sprite {
     private function jump(dt:Float):Void {
         movement.jump(dt);
 	move(dt);
-	hero.y = movement.y;
 	updateHeroSprite();
     }
 
     private function updateHeroSprite():Void {
         hero.x = movement.x;
+	hero.y = movement.y;
 	hero.scaleX = movement.scaleX;
-    }
-
-
-    private function switchState(newState:State):Void {
-        if (!stateIsUnlocked(newState)) {
-	    return;
-	}
-        movement.state = newState;
-
-        switch(newState) {
-	    case Fall:
-	       hero.startFall();
-	    case Floor:
-	       hero.endRun();
-	    case Jump:
-	       soundManager.play("jump");
-	       canDoubleJump = true;
-	       movement.jumpTime = 0.0;
-	       movement.vy = MovementLogic.JUMP_STRENGTH;
-	       hero.startJump();
-	    case DoubleJump:
-	       movement.vy = DOUBLE_JUMP_STRENGTH;
-	       canDoubleJump = false;
-	       hero.startDoubleJump();
-	    case FloatState:
-	       movement.vy = 0.0;
-	       hero.startFloat();
-	}
     }
 
 
@@ -245,7 +225,7 @@ class Game extends Sprite {
 
         if (landedPlatform != null) {
 	    hero.y = landedPlatform.y - hero.height;
-	    switchState(Floor);
+	    movement.switchState(Floor);
 	    movement.vy = 0;
 	    return;
 	}
@@ -253,7 +233,7 @@ class Game extends Sprite {
 
         if (hero.y > 900) {
             hero.y = 900;
-            switchState(Floor);
+            movement.switchState(Floor);
             movement.vy = 0;
         }
 
@@ -262,12 +242,11 @@ class Game extends Sprite {
 	}
 
         if (movement.spaceJustPressed) {
-            switchState(DoubleJump);
+            movement.switchState(DoubleJump);
 	    if (movement.state == Fall) {
-	        switchState(FloatState);
+	        movement.switchState(FloatState);
 	    }
         } 
-
     }
 
     private function doubleJump(dt:Float):Void {
@@ -280,7 +259,7 @@ class Game extends Sprite {
 	hero.y += movement.vy * dt;
 
 	if (movement.vy >= 0) {
-	    switchState(Fall);
+	    movement.switchState(Fall);
 	}
     }
 
@@ -309,7 +288,7 @@ class Game extends Sprite {
 	    case Jump:
 	       return true;
 	    case DoubleJump:
-	       return inventory.hasEffect(DoubleJumpAbility) && canDoubleJump;
+	       return inventory.hasEffect(DoubleJumpAbility) && movement.canDoubleJump;
 	    case FloatState:
 	       return inventory.hasEffect(FloatAbility) && movement.floatCooldown <= 0.0 && canFloat;
 	}
@@ -333,7 +312,7 @@ class Game extends Sprite {
 
         if (landedPlatform != null) {
 	    hero.y = landedPlatform.y - hero.height;
-	    switchState(Floor);
+	    movement.switchState(Floor);
 	    movement.vy = 0;
 	    return;
 	}
@@ -341,12 +320,12 @@ class Game extends Sprite {
 
         if (hero.y > 900) {
             hero.y = 900;
-            switchState(Floor);
+            movement.switchState(Floor);
             movement.vy = 0;
         }
 
         if (!movement.spacePressed) {
-            switchState(Fall);
+            movement.switchState(Fall);
 	    movement.floatCooldown = 0.2;
         }
     }

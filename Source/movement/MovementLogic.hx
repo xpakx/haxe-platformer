@@ -29,6 +29,17 @@ class MovementLogic {
     public static inline var GRAVITY:Float = 1800.0;
     public static inline var GRAVITY_FALL:Float = 2600.0;
 
+    public var canDoubleJump:Bool = false;
+    private static inline var DOUBLE_JUMP_STRENGTH:Float = -650.0;
+
+
+    public var onStartFall: Void -> Void;
+    public var onStartJump: Void -> Void;
+    public var onStartDoubleJump: Void -> Void;
+    public var onStartFloat: Void -> Void;
+    public var onEndRun: Void -> Void;
+    public var isUnlocked: State -> Bool;
+    public var soundManager: SoundManager;
 
     public function new(x:Float, y:Float, width:Float, stageWidth:Float) {
         this.x = x;
@@ -104,7 +115,30 @@ class MovementLogic {
     }
 
 
-    private function switchState(newState:State):Void {
+    public function switchState(newState:State):Void {
+        if (!isUnlocked(newState)) {
+	    return;
+	}
         state = newState;
+
+        switch(newState) {
+	    case Fall:
+	       onStartFall();
+	    case Floor:
+	       onEndRun();
+	    case Jump:
+	       soundManager.play("jump");
+	       canDoubleJump = true;
+	       jumpTime = 0.0;
+	       vy = JUMP_STRENGTH;
+	       onStartJump();
+	    case DoubleJump:
+	       vy = DOUBLE_JUMP_STRENGTH;
+	       canDoubleJump = false;
+	       onStartDoubleJump();
+	    case FloatState:
+	       vy = 0.0;
+	       onStartFloat();
+	}
     }
 }
