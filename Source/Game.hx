@@ -21,15 +21,6 @@ class Game extends Sprite {
     private var movement:MovementLogic;
     private var hero:TestCharacter;
 
-    private static inline var MAX_JUMP_TIME:Float = 0.7;
-    private var spacePressed:Bool = false;
-    private var spaceJustPressed:Bool = false;
-    private var jumpTime:Float = 0.0;
-    private var vy:Float = 0.0;
-    private static inline var JUMP_STRENGTH:Float = -1050.0;
-    private static inline var GRAVITY:Float = 1800.0;
-    private static inline var GRAVITY_FALL:Float = 2600.0;
-
     private static inline var DOUBLE_JUMP_STRENGTH:Float = -650.0;
     private var canDoubleJump:Bool = false;
 
@@ -124,12 +115,12 @@ class Game extends Sprite {
 	    movement.rightPressed = true;
 	}
         if (e.keyCode == Keyboard.SPACE) {
-	    if (!spacePressed) {
-	       spaceJustPressed = true;
+	    if (!movement.spacePressed) {
+	       movement.spaceJustPressed = true;
 	    } else {
-	       spaceJustPressed = false;
+	       movement.spaceJustPressed = false;
 	    }
-	    spacePressed = true;
+	    movement.spacePressed = true;
 	}
         if (e.keyCode == Keyboard.T) {
 	    dialogueTest();
@@ -144,8 +135,8 @@ class Game extends Sprite {
 	    movement.rightPressed = false;
 	}
         if (e.keyCode == Keyboard.SPACE) {
-	    spacePressed = false;
-            spaceJustPressed = false;
+	    movement.spacePressed = false;
+            movement.spaceJustPressed = false;
 	}
     }
 
@@ -160,6 +151,7 @@ class Game extends Sprite {
     }
 
     private function updateChar(dt:Float):Void {
+        movement.y = hero.y;
         switch(movement.state) {
 	    case Fall:
 	       fall(dt);
@@ -173,12 +165,11 @@ class Game extends Sprite {
 	       if (!isOnFloor()) {
 		       switchState(Fall);
 	       }
-	       if (spacePressed) {
+	       if (movement.spacePressed) {
 	          switchState(Jump);
 	       }
 	    case Jump:
 	       jump(dt);
-	       move(dt);
 	    case DoubleJump:
 	       doubleJump(dt);
 	       move(dt);
@@ -191,9 +182,20 @@ class Game extends Sprite {
     // TODO
     private function move(dt:Float):Bool {
         var result = movement.move(dt);
-	hero.x = movement.x;
-	hero.scaleX = movement.scaleX;
+	updateHeroSprite();
 	return result;
+    }
+
+    private function jump(dt:Float):Void {
+        movement.jump(dt);
+	move(dt);
+	hero.y = movement.y;
+	updateHeroSprite();
+    }
+
+    private function updateHeroSprite():Void {
+        hero.x = movement.x;
+	hero.scaleX = movement.scaleX;
     }
 
 
@@ -211,23 +213,23 @@ class Game extends Sprite {
 	    case Jump:
 	       soundManager.play("jump");
 	       canDoubleJump = true;
-	       jumpTime = 0.0;
-	       vy = JUMP_STRENGTH;
+	       movement.jumpTime = 0.0;
+	       movement.vy = MovementLogic.JUMP_STRENGTH;
 	       hero.startJump();
 	    case DoubleJump:
-	       vy = DOUBLE_JUMP_STRENGTH;
+	       movement.vy = DOUBLE_JUMP_STRENGTH;
 	       canDoubleJump = false;
 	       hero.startDoubleJump();
 	    case FloatState:
-	       vy = 0.0;
+	       movement.vy = 0.0;
 	       hero.startFloat();
 	}
     }
 
 
     private function fall(dt:Float):Void {
-	vy += GRAVITY_FALL * dt;
-	var nextY = hero.y + vy * dt;
+	movement.vy += MovementLogic.GRAVITY_FALL * dt;
+	var nextY = hero.y + movement.vy * dt;
 
 	var landedPlatform:Platform = null;
 	for (p in platforms) {
@@ -244,7 +246,7 @@ class Game extends Sprite {
         if (landedPlatform != null) {
 	    hero.y = landedPlatform.y - hero.height;
 	    switchState(Floor);
-	    vy = 0;
+	    movement.vy = 0;
 	    return;
 	}
         hero.y = nextY;
@@ -252,14 +254,14 @@ class Game extends Sprite {
         if (hero.y > 900) {
             hero.y = 900;
             switchState(Floor);
-            vy = 0;
+            movement.vy = 0;
         }
 
 	if (detectLedge()) {
 	    Browser.console.log("LEDGE DETECTED");
 	}
 
-        if (spaceJustPressed) {
+        if (movement.spaceJustPressed) {
             switchState(DoubleJump);
 	    if (movement.state == Fall) {
 	        switchState(FloatState);
@@ -268,39 +270,16 @@ class Game extends Sprite {
 
     }
 
-    private function jump(dt:Float):Void {
-        jumpTime += dt;
-        if (!spacePressed) {
-            if (vy < 0) {
-                vy *= 0.3; 
-            }
-	    switchState(Fall);
-	    return;
-	}
-
-        var currentGravity = GRAVITY;
-        if (Math.abs(vy) < 150.0) {
-            currentGravity *= 0.3;
-        }
-
-	vy += GRAVITY * dt;
-	hero.y += vy * dt;
-
-	if (vy >= 0) {
-	    switchState(Fall);
-	}
-    }
-
     private function doubleJump(dt:Float):Void {
-        var currentGravity = GRAVITY;
-        if (Math.abs(vy) < 150.0) {
+        var currentGravity = MovementLogic.GRAVITY;
+        if (Math.abs(movement.vy) < 150.0) {
             currentGravity *= 0.3;
         }
 
-	vy += GRAVITY * dt;
-	hero.y += vy * dt;
+	movement.vy += MovementLogic.GRAVITY * dt;
+	hero.y += movement.vy * dt;
 
-	if (vy >= 0) {
+	if (movement.vy >= 0) {
 	    switchState(Fall);
 	}
     }
@@ -337,8 +316,8 @@ class Game extends Sprite {
     }
 
     private function float(dt:Float):Void {
-	vy += GRAVITY_FLOAT * dt;
-	var nextY = hero.y + vy * dt;
+	movement.vy += GRAVITY_FLOAT * dt;
+	var nextY = hero.y + movement.vy * dt;
 
 	var landedPlatform:Platform = null;
 	for (p in platforms) {
@@ -355,7 +334,7 @@ class Game extends Sprite {
         if (landedPlatform != null) {
 	    hero.y = landedPlatform.y - hero.height;
 	    switchState(Floor);
-	    vy = 0;
+	    movement.vy = 0;
 	    return;
 	}
         hero.y = nextY;
@@ -363,10 +342,10 @@ class Game extends Sprite {
         if (hero.y > 900) {
             hero.y = 900;
             switchState(Floor);
-            vy = 0;
+            movement.vy = 0;
         }
 
-        if (!spacePressed) {
+        if (!movement.spacePressed) {
             switchState(Fall);
 	    movement.floatCooldown = 0.2;
         }

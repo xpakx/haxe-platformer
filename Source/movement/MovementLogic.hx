@@ -17,8 +17,17 @@ class MovementLogic {
 
     public var leftPressed:Bool = false;
     public var rightPressed:Bool = false;
+    public var spacePressed:Bool = false;
+    public var spaceJustPressed:Bool = false;
 
     public var state:State = Fall;
+
+    private static inline var MAX_JUMP_TIME:Float = 0.7;
+    public var jumpTime:Float = 0.0;
+    public var vy:Float = 0.0;
+    public static inline var JUMP_STRENGTH:Float = -1050.0;
+    public static inline var GRAVITY:Float = 1800.0;
+    public static inline var GRAVITY_FALL:Float = 2600.0;
 
 
     public function new(x:Float, y:Float, width:Float, stageWidth:Float) {
@@ -68,5 +77,34 @@ class MovementLogic {
         }
 
 	return moved;
+    }
+
+
+    public function jump(dt:Float):Void {
+        jumpTime += dt;
+        if (!spacePressed) {
+            if (vy < 0) {
+                vy *= 0.3; 
+            }
+	    switchState(Fall);
+	    return;
+	}
+
+        var currentGravity = GRAVITY;
+        if (Math.abs(vy) < 150.0) {
+            currentGravity *= 0.3;
+        }
+
+	vy += GRAVITY * dt;
+	y += vy * dt;
+
+	if (vy >= 0) {
+	    switchState(Fall);
+	}
+    }
+
+
+    private function switchState(newState:State):Void {
+        state = newState;
     }
 }
