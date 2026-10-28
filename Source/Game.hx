@@ -207,21 +207,27 @@ class Game extends Sprite {
     }
 
 
+    private function getLandedPlatform(x:Float, y:Float, width:Float, height:Float, nextX: Float, nextY: Float):Platform {
+	for (p in platforms) {
+	    var hitX = (x + width > p.x) && (x < p.x + p.width);
+	    var floor = p.y - height;
+	    var crossedTop = (y <= floor) && (nextY >= floor);
+
+	    if (hitX && crossedTop) {
+	        return p;
+            }
+	}
+	return null;
+    }
+
+
     private function fall(dt:Float):Void {
 	movement.vy += MovementLogic.GRAVITY_FALL * dt;
 	var nextY = hero.y + movement.vy * dt;
 
-	var landedPlatform:Platform = null;
-	for (p in platforms) {
-	    var hitX = (hero.x + hero.width > p.x) && (hero.x < p.x + p.width);
-	    var floor = p.y - hero.height;
-	    var crossedTop = (hero.y <= floor) && (nextY >= floor);
-
-	    if (hitX && crossedTop) {
-	        landedPlatform = p;
-	        break;
-            }
-	}
+	var landedPlatform:Platform = getLandedPlatform(
+	    hero.x, hero.y, hero.width, hero.height, hero.x, nextY
+        );
 
         if (landedPlatform != null) {
 	    hero.y = landedPlatform.y - hero.height;
@@ -236,10 +242,6 @@ class Game extends Sprite {
             movement.switchState(Floor);
             movement.vy = 0;
         }
-
-	if (detectLedge()) {
-	    Browser.console.log("LEDGE DETECTED");
-	}
 
         if (movement.spaceJustPressed) {
             movement.switchState(DoubleJump);
@@ -298,17 +300,9 @@ class Game extends Sprite {
 	movement.vy += GRAVITY_FLOAT * dt;
 	var nextY = hero.y + movement.vy * dt;
 
-	var landedPlatform:Platform = null;
-	for (p in platforms) {
-	    var hitX = (hero.x + hero.width > p.x) && (hero.x < p.x + p.width);
-	    var floor = p.y - hero.height;
-	    var crossedTop = (hero.y <= floor) && (nextY >= floor);
-
-	    if (hitX && crossedTop) {
-	        landedPlatform = p;
-	        break;
-            }
-	}
+	var landedPlatform:Platform = getLandedPlatform(
+	    hero.x, hero.y, hero.width, hero.height, hero.x, nextY
+        );
 
         if (landedPlatform != null) {
 	    hero.y = landedPlatform.y - hero.height;
