@@ -49,7 +49,7 @@ class MovementLogic {
     public var isUnlocked: State -> Bool;
     public var getLandedPlatform: (x:Float, y:Float, width:Float, height:Float, nextX: Float, nextY: Float) -> Platform;
     public var soundManager: SoundManager;
-    public var isOnFloor: Void -> Bool;
+    public var isOnFloor: (x:Float, y:Float, width:Float, height:Float) -> Bool;
 
     public function new(x:Float, y:Float, width:Float, height:Float, stageWidth:Float) {
         this.x = x;
@@ -239,7 +239,7 @@ class MovementLogic {
 	       } else {
 	           onEndRun();
 	       }
-	       if (!isOnFloor()) {
+	       if (!isOnFloor(x, y, width, height)) {
 		       switchState(Fall);
 	       }
 	       if (spacePressed) {

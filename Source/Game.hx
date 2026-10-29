@@ -180,13 +180,13 @@ class Game extends Sprite {
 	return null;
     }
 
-    public function isOnFloor():Bool {
+    public function isOnFloor(x:Float, y:Float, width:Float, height:Float):Bool {
         for (p in platforms) {
-            var hitX = (hero.x + hero.width > p.x) && (hero.x < p.x + p.width);
+            var hitX = (x + width > p.x) && (x < p.x + p.width);
 
-	    var floor = p.y - hero.height;
+	    var floor = p.y - height;
 
-            var hitY = (hero.y >= floor) && (hero.y <= floor + 15);
+            var hitY = (y >= floor) && (y <= floor + 15);
 
             if (hitX && hitY) {
                 return true;
