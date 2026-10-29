@@ -36,6 +36,9 @@ class MovementLogic {
     private static inline var DOUBLE_JUMP_STRENGTH:Float = -650.0;
     public static inline var GRAVITY_DOUBLE_JUMP:Float = 1800.0;
 
+    private static inline var GRAVITY_FLOAT:Float = 200.0;
+    public var canFloat:Bool = true;
+
 
     public var onStartFall: Void -> Void;
     public var onStartJump: Void -> Void;
@@ -192,4 +195,33 @@ class MovementLogic {
 	}
     }
 
+
+
+    public function float(dt:Float):Void {
+	vy += GRAVITY_FLOAT * dt;
+	var nextY = y + vy * dt;
+
+	var landedPlatform:Platform = getLandedPlatform(
+	    x, y, width, height, x, nextY
+        );
+
+        if (landedPlatform != null) {
+	    y = landedPlatform.y - height;
+	    switchState(Floor);
+	    vy = 0;
+	    return;
+	}
+        y = nextY;
+
+        if (y > 900) {
+            y = 900;
+            switchState(Floor);
+            vy = 0;
+        }
+
+        if (!spacePressed) {
+            switchState(Fall);
+	    floatCooldown = 0.2;
+        }
+    }
 }

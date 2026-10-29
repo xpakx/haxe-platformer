@@ -25,8 +25,6 @@ class Game extends Sprite {
     private var platforms:Array<Platform> = [];
 
 
-    private static inline var GRAVITY_FLOAT:Float = 200.0;
-    private var canFloat:Bool = true;
 
     private var soundManager:SoundManager;
 
@@ -160,7 +158,6 @@ class Game extends Sprite {
         switch(movement.state) {
 	    case Fall:
 	       movement.fall(dt);
-	       hero.y = movement.y;
 	       move(dt);
 	    case Floor:
 	       if (move(dt)) {
@@ -180,8 +177,7 @@ class Game extends Sprite {
 	       movement.doubleJump(dt);
 	       move(dt);
 	    case FloatState:
-	       float(dt);
-	       movement.y = hero.y;
+	       movement.float(dt);
 	       move(dt);
 	}
     }
@@ -193,6 +189,7 @@ class Game extends Sprite {
 	return result;
     }
 
+    // TODO
     private function jump(dt:Float):Void {
         movement.jump(dt);
 	move(dt);
@@ -246,36 +243,8 @@ class Game extends Sprite {
 	    case DoubleJump:
 	       return inventory.hasEffect(DoubleJumpAbility) && movement.canDoubleJump;
 	    case FloatState:
-	       return inventory.hasEffect(FloatAbility) && movement.floatCooldown <= 0.0 && canFloat;
+	       return inventory.hasEffect(FloatAbility) && movement.floatCooldown <= 0.0 && movement.canFloat;
 	}
-    }
-
-    private function float(dt:Float):Void {
-	movement.vy += GRAVITY_FLOAT * dt;
-	var nextY = hero.y + movement.vy * dt;
-
-	var landedPlatform:Platform = getLandedPlatform(
-	    hero.x, hero.y, hero.width, hero.height, hero.x, nextY
-        );
-
-        if (landedPlatform != null) {
-	    hero.y = landedPlatform.y - hero.height;
-	    movement.switchState(Floor);
-	    movement.vy = 0;
-	    return;
-	}
-        hero.y = nextY;
-
-        if (hero.y > 900) {
-            hero.y = 900;
-            movement.switchState(Floor);
-            movement.vy = 0;
-        }
-
-        if (!movement.spacePressed) {
-            movement.switchState(Fall);
-	    movement.floatCooldown = 0.2;
-        }
     }
 
     private function detectLedge():Bool {
