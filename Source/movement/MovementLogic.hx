@@ -45,9 +45,11 @@ class MovementLogic {
     public var onStartDoubleJump: Void -> Void;
     public var onStartFloat: Void -> Void;
     public var onEndRun: Void -> Void;
+    public var onStartRun: Void -> Void;
     public var isUnlocked: State -> Bool;
     public var getLandedPlatform: (x:Float, y:Float, width:Float, height:Float, nextX: Float, nextY: Float) -> Platform;
     public var soundManager: SoundManager;
+    public var isOnFloor: Void -> Bool;
 
     public function new(x:Float, y:Float, width:Float, height:Float, stageWidth:Float) {
         this.x = x;
@@ -223,5 +225,35 @@ class MovementLogic {
             switchState(Fall);
 	    floatCooldown = 0.2;
         }
+    }
+
+
+    public function update(dt:Float):Void {
+        switch(state) {
+	    case Fall:
+	       fall(dt);
+	       move(dt);
+	    case Floor:
+	       if (move(dt)) {
+	           onStartRun();
+	       } else {
+	           onEndRun();
+	       }
+	       if (!isOnFloor()) {
+		       switchState(Fall);
+	       }
+	       if (spacePressed) {
+	          switchState(Jump);
+	       }
+	    case Jump:
+	       jump(dt);
+	       move(dt);
+	    case DoubleJump:
+	       doubleJump(dt);
+	       move(dt);
+	    case FloatState:
+	       float(dt);
+	       move(dt);
+	}
     }
 }

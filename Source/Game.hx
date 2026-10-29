@@ -61,9 +61,11 @@ class Game extends Sprite {
 	movement.onStartJump = hero.startJump;
 	movement.onStartDoubleJump = hero.startDoubleJump;
 	movement.onStartFloat = hero.startFloat;
-	movement.onEndRun = hero.startRun;
+	movement.onEndRun = hero.endRun;
+	movement.onStartRun = hero.startRun;
 	movement.isUnlocked = this.stateIsUnlocked;
 	movement.getLandedPlatform = this.getLandedPlatform;
+	movement.isOnFloor = this.isOnFloor;
 
 	movement.switchState(movement.state);
 
@@ -154,45 +156,7 @@ class Game extends Sprite {
     }
 
     private function updateChar(dt:Float):Void {
-        movement.y = hero.y;
-        switch(movement.state) {
-	    case Fall:
-	       movement.fall(dt);
-	       move(dt);
-	    case Floor:
-	       if (move(dt)) {
-	           hero.startRun();
-	       } else {
-	           hero.endRun();
-	       }
-	       if (!isOnFloor()) {
-		       movement.switchState(Fall);
-	       }
-	       if (movement.spacePressed) {
-	          movement.switchState(Jump);
-	       }
-	    case Jump:
-	       jump(dt);
-	    case DoubleJump:
-	       movement.doubleJump(dt);
-	       move(dt);
-	    case FloatState:
-	       movement.float(dt);
-	       move(dt);
-	}
-    }
-
-    // TODO
-    private function move(dt:Float):Bool {
-        var result = movement.move(dt);
-	updateHeroSprite();
-	return result;
-    }
-
-    // TODO
-    private function jump(dt:Float):Void {
-        movement.jump(dt);
-	move(dt);
+	movement.update(dt);
 	updateHeroSprite();
     }
 
