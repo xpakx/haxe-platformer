@@ -34,6 +34,7 @@ class MovementLogic {
 
     public var canDoubleJump:Bool = false;
     private static inline var DOUBLE_JUMP_STRENGTH:Float = -650.0;
+    public static inline var GRAVITY_DOUBLE_JUMP:Float = 1800.0;
 
 
     public var onStartFall: Void -> Void;
@@ -178,12 +179,12 @@ class MovementLogic {
     }
 
     public function doubleJump(dt:Float):Void {
-        var currentGravity = GRAVITY;
+        var currentGravity = GRAVITY_DOUBLE_JUMP;
         if (Math.abs(vy) < 150.0) {
             currentGravity *= 0.3;
         }
 
-	vy += GRAVITY * dt;
+	vy += currentGravity * dt;
 	y += vy * dt;
 
 	if (vy >= 0) {
