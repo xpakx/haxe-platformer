@@ -176,4 +176,19 @@ class MovementLogic {
 	    }
         } 
     }
+
+    public function doubleJump(dt:Float):Void {
+        var currentGravity = GRAVITY;
+        if (Math.abs(vy) < 150.0) {
+            currentGravity *= 0.3;
+        }
+
+	vy += GRAVITY * dt;
+	y += vy * dt;
+
+	if (vy >= 0) {
+	    switchState(Fall);
+	}
+    }
+
 }

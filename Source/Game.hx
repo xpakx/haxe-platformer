@@ -177,8 +177,7 @@ class Game extends Sprite {
 	    case Jump:
 	       jump(dt);
 	    case DoubleJump:
-	       doubleJump(dt);
-	       movement.y = hero.y;
+	       movement.doubleJump(dt);
 	       move(dt);
 	    case FloatState:
 	       float(dt);
@@ -218,20 +217,6 @@ class Game extends Sprite {
             }
 	}
 	return null;
-    }
-
-    private function doubleJump(dt:Float):Void {
-        var currentGravity = MovementLogic.GRAVITY;
-        if (Math.abs(movement.vy) < 150.0) {
-            currentGravity *= 0.3;
-        }
-
-	movement.vy += MovementLogic.GRAVITY * dt;
-	hero.y += movement.vy * dt;
-
-	if (movement.vy >= 0) {
-	    movement.switchState(Fall);
-	}
     }
 
     public function isOnFloor():Bool {
