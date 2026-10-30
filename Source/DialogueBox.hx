@@ -10,6 +10,7 @@ import starling.display.Image;
 import openfl.utils.Assets;
 import openfl.geom.Rectangle;
 import starling.textures.Texture;
+import starling.text.TextFieldAutoSize;
 
 enum DialogueBackgroundMode {
     Solid;
@@ -38,7 +39,7 @@ class DialogueBox extends Sprite {
 
         var boxWidth:Float = stageWidth - 100;
         var boxHeight:Float = 150;
-        bg = createBackground(NineSlice, boxWidth, boxHeight);
+        bg = createBackground(Solid, boxWidth, boxHeight);
         bg.x = 50;
         bg.y = stageHeight - boxHeight - 30;
         addChild(bg);
@@ -66,10 +67,11 @@ class DialogueBox extends Sprite {
         var textWidth:Int = Std.int(boxWidth - 40);
         var textHeight:Int = Std.int(boxHeight - 40);
         textField = new TextField(textWidth, textHeight, "");
+	textField.wordWrap = false;
         textField.x = bg.x + 20;
         textField.y = bg.y + 20;
         textField.format.font = "Verdana";
-        textField.format.size = 20;
+        textField.format.size = 30;
         textField.format.color = 0xFFFFFF;
         textField.format.horizontalAlign = "left";
         textField.format.verticalAlign = "top";
@@ -91,7 +93,7 @@ class DialogueBox extends Sprite {
 
         var line = dialogueQueue[currentIndex];
         nameField.text = line.speaker;
-        fullText = line.text;
+        fullText = wrapText(line.text);
         displayedCharCount = 0;
         textField.text = "";
         isTyping = true;
@@ -145,6 +147,7 @@ class DialogueBox extends Sprite {
 	        quad.alpha = 0.8;
 	        return quad;
             case NineSlice:
+	        // TODO: bultin 9slice streches tiles instead of repeating
 
                 var texture = Texture.fromData(
                     Assets.getBitmapData("assets/dialogue_box.png")
@@ -162,5 +165,38 @@ class DialogueBox extends Sprite {
                 image.height = height;
                 return image;
         }
+    }
+
+
+    private function wrapText(text:String):String {
+        var words = text.split(" ");
+        var lines:Array<String> = [];
+        var currentLine = "";
+
+        var measureField = new TextField(1, 40, "");
+        measureField.format = textField.format;
+        measureField.wordWrap = false;
+        measureField.autoSize = TextFieldAutoSize.HORIZONTAL;
+
+        for (word in words) {
+            var testLine = currentLine == "" ? word : currentLine + " " + word;
+
+            measureField.text = testLine;
+
+            if (measureField.width > textField.width && currentLine != "") {
+                lines.push(currentLine);
+                currentLine = word;
+            } else {
+                currentLine = testLine;
+            }
+        }
+
+        if (currentLine != "") {
+            lines.push(currentLine);
+        }
+
+        measureField.dispose();
+
+        return lines.join("\n");
     }
 }
