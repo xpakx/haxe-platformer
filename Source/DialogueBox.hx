@@ -6,6 +6,15 @@ import starling.text.TextField;
 import starling.events.KeyboardEvent;
 import starling.display.DisplayObject;
 import openfl.ui.Keyboard;
+import starling.display.Image;
+import openfl.utils.Assets;
+import openfl.geom.Rectangle;
+import starling.textures.Texture;
+
+enum DialogueBackgroundMode {
+    Solid;
+    NineSlice;
+}
 
 class DialogueBox extends Sprite {
     private var bg:DisplayObject;
@@ -29,7 +38,7 @@ class DialogueBox extends Sprite {
 
         var boxWidth:Float = stageWidth - 100;
         var boxHeight:Float = 150;
-        bg = createBackground(boxWidth, boxHeight);
+        bg = createBackground(NineSlice, boxWidth, boxHeight);
         bg.x = 50;
         bg.y = stageHeight - boxHeight - 30;
         addChild(bg);
@@ -126,9 +135,32 @@ class DialogueBox extends Sprite {
         }
     }
 
-    private function createBackground(width:Float, height:Float):DisplayObject {
-        var quad = new Quad(width, height, 0x000000);
-	quad.alpha = 0.8;
-	return quad;
+    private function createBackground(
+        mode:DialogueBackgroundMode, width:Float, height:Float):DisplayObject {
+
+
+        switch (mode) {
+            case Solid:
+                var quad = new Quad(width, height, 0x000000);
+	        quad.alpha = 0.8;
+	        return quad;
+            case NineSlice:
+
+                var texture = Texture.fromData(
+                    Assets.getBitmapData("assets/dialogue_box.png")
+                );
+                var image = new Image(texture);
+
+                image.scale9Grid = new Rectangle(
+                    texture.width / 3,
+                    texture.height / 3,
+                    texture.width / 3,
+                    texture.height / 3
+                );
+
+                image.width = width;
+                image.height = height;
+                return image;
+        }
     }
 }

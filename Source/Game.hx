@@ -25,7 +25,6 @@ class Game extends Sprite {
     private var platforms:Array<Platform> = [];
 
 
-
     private var soundManager:SoundManager;
 
     private var world:Sprite;
