@@ -8,6 +8,7 @@ import openfl.ui.Keyboard;
 import openfl.media.Sound;
 import openfl.media.SoundChannel;
 import openfl.utils.Assets;
+import starling.display.Quad;
 
 import js.Browser;
 
@@ -347,6 +348,22 @@ class Game extends Sprite {
 	        c.onInteraction();
             }
         }
+    }
+
+    private function intersects(first:Quad, second:Quad):Bool {
+        var firstRight = first.x + first.width;
+        var firstLeft = first.x;
+        var firstTop = first.y;
+        var firstBottom = first.y + first.height;
+
+        var secondRight = second.x + second.width;
+        var secondLeft = second.x;
+        var secondTop = second.y;
+        var secondBottom = second.y + second.height;
+        return !(firstRight < secondLeft || 
+                 firstLeft > secondRight || 
+                 firstBottom < secondTop || 
+                 firstTop > secondBottom);
     }
 }
 
