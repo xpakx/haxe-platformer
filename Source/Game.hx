@@ -17,6 +17,15 @@ import platform.Platform;
 import movement.MovementLogic;
 import movement.State;
 
+typedef NPC = {
+    var x:Float;
+    var y:Float;
+    var width:Float;
+    var height:Float;
+    var quad:starling.display.Quad;
+    var onInteraction: Void -> Void;
+}
+
 class Game extends Sprite {
     private var movement:MovementLogic;
     private var hero:TestCharacter;
@@ -35,6 +44,7 @@ class Game extends Sprite {
 
     private var collectibles:Array<Collectible> = [];
     private var score:Int = 0;
+    private var chars:Array<NPC> = [];
 
     private var inventory:Inventory;
 
@@ -70,6 +80,7 @@ class Game extends Sprite {
 
 	initPlatforms();
 	initCollectibles();
+	initNPCs();
 	world.addChild(hero);
         camera.setTarget(hero);
 	camera.snapToTarget();
@@ -126,8 +137,8 @@ class Game extends Sprite {
 	    }
 	    movement.spacePressed = true;
 	}
-        if (e.keyCode == Keyboard.T) {
-	    dialogueTest();
+        if (e.keyCode == Keyboard.ENTER) {
+	    interact();
 	}
     }
 
@@ -261,6 +272,16 @@ class Game extends Sprite {
         ]);
     }
 
+    private function initNPCs():Void {
+	    var color = 0xFFD700;
+            var quad = new starling.display.Quad(50, 70, color);
+            quad.x = 900;
+            quad.y = 780;
+            world.addChild(quad);
+	    var npc = {x: quad.x, y: quad.y, width: 30.0, height: 50.0, quad: quad, onInteraction: dialogueTest};
+	    chars.push(npc);
+    }
+
     private function initCollectibles():Void {
         collectibles = [
             { x: 230, y: 640, width: 20, height: 20, collected: false, quad: null, type: Coin, itemId: "score" },
@@ -308,6 +329,22 @@ class Game extends Sprite {
 		    case Resource:
                         Browser.console.log("Collected resource: " + c.itemId);
                 }
+            }
+        }
+    }
+
+
+    private function interact():Void {
+        for (c in chars) {
+            if (c.onInteraction == null) continue;
+
+            var hit = (hero.x < c.x + c.width) &&
+                  (hero.x + hero.width > c.x) &&
+                  (hero.y < c.y + c.height) &&
+                  (hero.y + hero.height > c.y);
+
+            if (hit) {
+	        c.onInteraction();
             }
         }
     }
