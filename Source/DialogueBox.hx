@@ -4,11 +4,12 @@ import starling.display.Sprite;
 import starling.display.Quad;
 import starling.text.TextField;
 import starling.events.KeyboardEvent;
+import starling.display.DisplayObject;
 import openfl.ui.Keyboard;
 
 class DialogueBox extends Sprite {
-    private var bg:Quad;
-    private var nameBox:Quad;
+    private var bg:DisplayObject;
+    private var nameBox:DisplayObject;
     private var nameField:TextField;
     private var textField:TextField;
 
@@ -28,8 +29,7 @@ class DialogueBox extends Sprite {
 
         var boxWidth:Float = stageWidth - 100;
         var boxHeight:Float = 150;
-        bg = new Quad(boxWidth, boxHeight, 0x000000);
-        bg.alpha = 0.8;
+        bg = createBackground(boxWidth, boxHeight);
         bg.x = 50;
         bg.y = stageHeight - boxHeight - 30;
         addChild(bg);
@@ -124,5 +124,11 @@ class DialogueBox extends Sprite {
         if (onComplete != null) {
             onComplete();
         }
+    }
+
+    private function createBackground(width:Float, height:Float):DisplayObject {
+        var quad = new Quad(width, height, 0x000000);
+	quad.alpha = 0.8;
+	return quad;
     }
 }
