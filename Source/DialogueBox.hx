@@ -34,6 +34,8 @@ class DialogueBox extends Sprite {
 
     public var onComplete:Void->Void;
 
+    private static inline var TILE_SIZE:Int = 50;
+
     public function new(stageWidth:Float, stageHeight:Float) {
         super();
 
@@ -198,51 +200,30 @@ class DialogueBox extends Sprite {
         var sw = texture.width / 3;
         var sh = texture.height / 3;
 
-        var tileSize = 50;
+        var middleW = Math.max(0, width - 2*TILE_SIZE);
+        var middleH = Math.max(0, height - 2*TILE_SIZE);
 
-        var middleW = Math.max(0, width - tileSize - tileSize);
-        var middleH = Math.max(0, height - tileSize - tileSize);
+        var topLeft = new Rectangle(0, 0, sw, sh);
+        var topRight = new Rectangle(2*sw, 0, sw, sh);
+        var bottomLeft = new Rectangle(0, 2*sh, sw, sh);
+        var bottomRight = new Rectangle(2*sw, 2*sh, sw, sh);
+        var topMiddle = new Rectangle(sw, 0, sw, sh);
+        var bottomMiddle = new Rectangle(sw, sh*2, sw, sh);
+        var leftMiddle = new Rectangle(0, sh, sw, sh);
+        var rightMiddle = new Rectangle(sw*2, sh, sw, sh);
+        var middle = new Rectangle(sw, sh, sw, sh);
 
-        addSlice(result, texture,
-            0, 0, sw, sh,
-            0, 0, tileSize, tileSize);
+        addSlice(result, texture, topLeft, 0, 0);
+        addSlice(result, texture, topRight, TILE_SIZE + middleW, 0);
+        addSlice(result, texture, bottomLeft, 0, TILE_SIZE + middleH);
+        addSlice(result, texture, bottomRight, TILE_SIZE + middleW, TILE_SIZE + middleH);
 
-        addSlice(result, texture,
-            sw * 2, 0, sw, sh,
-            tileSize + middleW, 0, tileSize, tileSize);
+        addTiledSlice(result, texture, topMiddle, TILE_SIZE, 0, middleW, TILE_SIZE);
+        addTiledSlice(result, texture, bottomMiddle, TILE_SIZE, TILE_SIZE + middleH, middleW, TILE_SIZE);
 
-        addSlice(result, texture,
-            0, sh * 2, sw, sh,
-            0, tileSize + middleH, tileSize, tileSize);
-
-        addSlice(result, texture,
-            sw * 2, sh * 2, sw, sh,
-            tileSize + middleW, tileSize + middleH, tileSize, tileSize);
-
-        addTiledSlice(result, texture,
-            sw, 0, sw, sh,
-            tileSize, 0, middleW, tileSize,
-            tileSize, tileSize);
-
-        addTiledSlice(result, texture,
-            sw, sh * 2, sw, sh,
-            tileSize, tileSize + middleH, middleW, tileSize,
-            tileSize, tileSize);
-
-        addTiledSlice(result, texture,
-            0, sh, sw, sh,
-            0, tileSize, tileSize, middleH,
-            tileSize, tileSize);
-
-        addTiledSlice(result, texture,
-            sw * 2, sh, sw, sh,
-            tileSize + middleW, tileSize, tileSize, middleH,
-            tileSize, tileSize);
-
-        addTiledSlice(result, texture,
-            sw, sh, sw, sh,
-            tileSize, tileSize, middleW, middleH,
-            tileSize, tileSize);
+        addTiledSlice(result, texture, leftMiddle, 0, TILE_SIZE, TILE_SIZE, middleH);
+        addTiledSlice(result, texture, rightMiddle, TILE_SIZE + middleW, TILE_SIZE, TILE_SIZE, middleH);
+        addTiledSlice(result, texture, middle, TILE_SIZE, TILE_SIZE, middleW, middleH);
 
 
         return result;
@@ -251,20 +232,16 @@ class DialogueBox extends Sprite {
     private function addSlice(
         parent:Sprite,
         source:Texture,
-        sx:Float, sy:Float,
-        sw:Float, sh:Float,
-        x:Float, y:Float,
-        width:Float, height:Float,
+	sourceRegion:Rectangle,
+        x:Float,
+	y:Float
     ):Void {
-        if (width <= 0 || height <= 0) return;
-
-        var region = new Rectangle(sx, sy, sw, sh);
-        var subTexture = Texture.fromTexture(source, region);
+        var subTexture = Texture.fromTexture(source, sourceRegion);
         var image = new Image(subTexture);
         image.x = x;
         image.y = y;
-        image.width = width;
-        image.height = height;
+        image.width = TILE_SIZE;
+        image.height = TILE_SIZE;
 
         parent.addChild(image);
     }
@@ -272,18 +249,14 @@ class DialogueBox extends Sprite {
     private function addTiledSlice(
         parent:Sprite,
         source:Texture,
-        sx:Float, sy:Float,
-        sw:Float, sh:Float,
+	sourceRegion:Rectangle,
         x:Float, y:Float,
-        width:Float, height:Float,
-        tileWidth:Float, tileHeight:Float
+        width:Float, height:Float
     ):Void {
 
         if (width <= 0 || height <= 0) return;
     
-        var sub = Texture.fromTexture(
-            source, new Rectangle(sx, sy, sw, sh)
-        );
+        var sub = Texture.fromTexture(source, sourceRegion);
 
         var image = new Image(sub);
     
@@ -294,7 +267,7 @@ class DialogueBox extends Sprite {
         image.height = height;
 
         image.tileGrid = new Rectangle(
-            0, 0, tileWidth, tileHeight
+            0, 0, TILE_SIZE, TILE_SIZE
         );
 
         parent.addChild(image);
