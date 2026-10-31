@@ -39,7 +39,7 @@ class DialogueBox extends Sprite {
 
         var boxWidth:Float = stageWidth - 100;
         var boxHeight:Float = 150;
-        bg = createBackground(Solid, boxWidth, boxHeight);
+        bg = createBackground(NineSlice, boxWidth, boxHeight);
         bg.x = 50;
         bg.y = stageHeight - boxHeight - 30;
         addChild(bg);
@@ -147,23 +147,10 @@ class DialogueBox extends Sprite {
 	        quad.alpha = 0.8;
 	        return quad;
             case NineSlice:
-	        // TODO: bultin 9slice streches tiles instead of repeating
-
                 var texture = Texture.fromData(
                     Assets.getBitmapData("assets/dialogue_box.png")
                 );
-                var image = new Image(texture);
-
-                image.scale9Grid = new Rectangle(
-                    texture.width / 3,
-                    texture.height / 3,
-                    texture.width / 3,
-                    texture.height / 3
-                );
-
-                image.width = width;
-                image.height = height;
-                return image;
+		return createTiledNineSlice(texture, width, height);
         }
     }
 
@@ -198,5 +185,60 @@ class DialogueBox extends Sprite {
         measureField.dispose();
 
         return lines.join("\n");
+    }
+
+    private function createTiledNineSlice(
+        texture:Texture,
+        width:Float,
+        height:Float
+    ):DisplayObject {
+
+        var result = new Sprite();
+
+        var sw = texture.width / 3;
+        var sh = texture.height / 3;
+
+        var tileSize = 50;
+
+        var middleW = Math.max(0, width - tileSize - tileSize);
+        var middleH = Math.max(0, height - tileSize - tileSize);
+
+        addSlice(result, texture,
+            0, 0, sw, sh,
+            0, 0, tileSize, tileSize);
+
+        addSlice(result, texture,
+            sw * 2, 0, sw, sh,
+            tileSize + middleW, 0, tileSize, tileSize);
+
+        addSlice(result, texture,
+            0, sh * 2, sw, sh,
+            0, tileSize + middleH, tileSize, tileSize);
+
+        addSlice(result, texture,
+            sw * 2, sh * 2, sw, sh,
+            tileSize + middleW, tileSize + middleH, tileSize, tileSize);
+        return result;
+    }
+
+    private function addSlice(
+        parent:Sprite,
+        source:Texture,
+        sx:Float, sy:Float,
+        sw:Float, sh:Float,
+        x:Float, y:Float,
+        width:Float, height:Float,
+    ):Void {
+        if (width <= 0 || height <= 0) return;
+
+        var region = new Rectangle(sx, sy, sw, sh);
+        var subTexture = Texture.fromTexture(source, region);
+        var image = new Image(subTexture);
+        image.x = x;
+        image.y = y;
+        image.width = width;
+        image.height = height;
+
+        parent.addChild(image);
     }
 }
