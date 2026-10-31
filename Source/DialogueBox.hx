@@ -218,6 +218,33 @@ class DialogueBox extends Sprite {
         addSlice(result, texture,
             sw * 2, sh * 2, sw, sh,
             tileSize + middleW, tileSize + middleH, tileSize, tileSize);
+
+        addTiledSlice(result, texture,
+            sw, 0, sw, sh,
+            tileSize, 0, middleW, tileSize,
+            tileSize, tileSize);
+
+        addTiledSlice(result, texture,
+            sw, sh * 2, sw, sh,
+            tileSize, tileSize + middleH, middleW, tileSize,
+            tileSize, tileSize);
+
+        addTiledSlice(result, texture,
+            0, sh, sw, sh,
+            0, tileSize, tileSize, middleH,
+            tileSize, tileSize);
+
+        addTiledSlice(result, texture,
+            sw * 2, sh, sw, sh,
+            tileSize + middleW, tileSize, tileSize, middleH,
+            tileSize, tileSize);
+
+        addTiledSlice(result, texture,
+            sw, sh, sw, sh,
+            tileSize, tileSize, middleW, middleH,
+            tileSize, tileSize);
+
+
         return result;
     }
 
@@ -238,6 +265,37 @@ class DialogueBox extends Sprite {
         image.y = y;
         image.width = width;
         image.height = height;
+
+        parent.addChild(image);
+    }
+
+    private function addTiledSlice(
+        parent:Sprite,
+        source:Texture,
+        sx:Float, sy:Float,
+        sw:Float, sh:Float,
+        x:Float, y:Float,
+        width:Float, height:Float,
+        tileWidth:Float, tileHeight:Float
+    ):Void {
+
+        if (width <= 0 || height <= 0) return;
+    
+        var sub = Texture.fromTexture(
+            source, new Rectangle(sx, sy, sw, sh)
+        );
+
+        var image = new Image(sub);
+    
+        image.x = x;
+        image.y = y;
+
+        image.width = width;
+        image.height = height;
+
+        image.tileGrid = new Rectangle(
+            0, 0, tileWidth, tileHeight
+        );
 
         parent.addChild(image);
     }
