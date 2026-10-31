@@ -17,13 +17,25 @@ enum DialogueBackgroundMode {
     NineSlice;
 }
 
+typedef DialogueChoice = {
+    var text: String;
+    var nextIndex: Int;
+}
+
+typedef DialogueLine = {
+    var speaker: String;
+    var text: String;
+    @:optional var choices: Array<DialogueChoice>;
+    @:optional var portraitId: String;
+}
+
 class DialogueBox extends Sprite {
     private var bg:DisplayObject;
     private var nameBox:DisplayObject;
     private var nameField:TextField;
     private var textField:TextField;
 
-    private var dialogueQueue:Array<{ speaker: String, text: String }> = [];
+    private var dialogueQueue:Array<DialogueLine> = [];
     private var currentIndex:Int = 0;
     
     private var fullText:String = "";
@@ -80,7 +92,7 @@ class DialogueBox extends Sprite {
         addChild(textField);
     }
 
-    public function startDialogue(dialogueList:Array<{ speaker: String, text: String }>):Void {
+    public function startDialogue(dialogueList:Array<DialogueLine>):Void {
         dialogueQueue = dialogueList;
         currentIndex = 0;
         visible = true;
