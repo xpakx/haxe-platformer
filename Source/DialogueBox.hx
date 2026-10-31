@@ -41,7 +41,7 @@ class DialogueBox extends Sprite {
 
         var boxWidth:Float = stageWidth - 100;
         var boxHeight:Float = 150;
-        bg = createBackground(NineSlice, boxWidth, boxHeight);
+        bg = createBackground(Solid, boxWidth, boxHeight);
         bg.x = 50;
         bg.y = stageHeight - boxHeight - 30;
         addChild(bg);
@@ -94,7 +94,12 @@ class DialogueBox extends Sprite {
         }
 
         var line = dialogueQueue[currentIndex];
-        nameField.text = line.speaker;
+
+        var hasSpeaker = line.speaker != null && line.speaker.length > 0;
+        nameBox.visible = hasSpeaker;
+        nameField.visible = hasSpeaker;
+	if (hasSpeaker) nameField.text = line.speaker;
+
         fullText = wrapText(line.text);
         displayedCharCount = 0;
         textField.text = "";

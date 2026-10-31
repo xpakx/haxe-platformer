@@ -269,6 +269,7 @@ class Game extends Sprite {
         dialogueBox.startDialogue([
             { speaker: "Hero", text: "Blah blah blah" },
             { speaker: "Test", text: "test test test test" },
+            { speaker: null, text: "narrator test" },
             { speaker: "Hero", text: "test test tst test test test" }
         ]);
     }
