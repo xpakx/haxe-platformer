@@ -9,7 +9,6 @@ import openfl.media.Sound;
 import openfl.media.SoundChannel;
 import openfl.utils.Assets;
 import starling.display.Quad;
-import starling.display.DisplayObject;
 
 import js.Browser;
 
@@ -18,6 +17,8 @@ import collectible.CollectibleType;
 import platform.Platform;
 import movement.MovementLogic;
 import movement.State;
+
+using Intersects;
 
 typedef NPC = {
     var x:Float;
@@ -307,7 +308,7 @@ class Game extends Sprite {
         for (c in collectibles) {
             if (c.collected) continue;
 
-            var hit = intersects(hero, c.quad);
+            var hit = hero.intersects(c.quad);
             if (hit) {
                 c.collected = true;
                 world.removeChild(c.quad);
@@ -336,27 +337,12 @@ class Game extends Sprite {
         for (c in chars) {
             if (c.onInteraction == null) continue;
 
-            var hit = intersects(hero, c.quad);
+            var hit = hero.intersects(c.quad);
             if (hit) {
 	        c.onInteraction();
             }
         }
     }
 
-    private function intersects(first:DisplayObject, second:DisplayObject):Bool {
-        var firstRight = first.x + first.width;
-        var firstLeft = first.x;
-        var firstTop = first.y;
-        var firstBottom = first.y + first.height;
-
-        var secondRight = second.x + second.width;
-        var secondLeft = second.x;
-        var secondTop = second.y;
-        var secondBottom = second.y + second.height;
-        return !(firstRight < secondLeft || 
-                 firstLeft > secondRight || 
-                 firstBottom < secondTop || 
-                 firstTop > secondBottom);
-    }
 }
 
