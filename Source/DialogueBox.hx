@@ -43,6 +43,7 @@ class DialogueBox extends Sprite {
     private var timer:Float = 0;
     private var textSpeed:Float = 0.03;
     private var isTyping:Bool = false;
+    private var mode:DialogueBackgroundMode = Solid;
 
     public var onComplete:Void->Void;
 
@@ -51,9 +52,10 @@ class DialogueBox extends Sprite {
     public function new(stageWidth:Float, stageHeight:Float) {
         super();
 
+
         var boxWidth:Float = stageWidth - 100;
         var boxHeight:Float = 150;
-        bg = createBackground(Solid, boxWidth, boxHeight);
+        bg = createBackground(mode, boxWidth, boxHeight);
         bg.x = 50;
         bg.y = stageHeight - boxHeight - 30;
         addChild(bg);
@@ -78,12 +80,13 @@ class DialogueBox extends Sprite {
         nameField.format.verticalAlign = "center";
         addChild(nameField);
 
-        var textWidth:Int = Std.int(boxWidth - 40);
-        var textHeight:Int = Std.int(boxHeight - 40);
+	var textPadding:Int = mode == Solid ? 20 : 20 + TILE_SIZE;
+        var textWidth:Int = Std.int(boxWidth - 2*textPadding);
+        var textHeight:Int = Std.int(boxHeight - 2*textPadding);
         textField = new TextField(textWidth, textHeight, "");
 	textField.wordWrap = false;
-        textField.x = bg.x + 20;
-        textField.y = bg.y + 20;
+        textField.x = bg.x + textPadding;
+        textField.y = bg.y + textPadding;
         textField.format.font = "Verdana";
         textField.format.size = 30;
         textField.format.color = 0xFFFFFF;
