@@ -156,6 +156,11 @@ class DialogueBox extends Sprite {
     public function handleInput(keyCode:Int):Void {
         if (!visible) return;
 
+        if (currentChoices != null && currentChoices.length > 0 && !isTyping) {
+	    handleChoice(keyCode);
+	    return;
+        }
+
         if (keyCode == Keyboard.SPACE || keyCode == Keyboard.ENTER) {
             if (isTyping) {
                 isTyping = false;
@@ -166,6 +171,47 @@ class DialogueBox extends Sprite {
                 showCurrentLine();
             }
         }
+    }
+
+    private function handleChoice(keyCode:Int):Void {
+        if (keyCode == Keyboard.UP) {
+            selectedChoiceIndex--;
+            if (selectedChoiceIndex < 0) {
+                selectedChoiceIndex = currentChoices.length - 1;
+            }
+            updateChoiceHighlight();
+        }
+        if (keyCode == Keyboard.DOWN) {
+            selectedChoiceIndex++;
+            if (selectedChoiceIndex >= currentChoices.length) {
+                selectedChoiceIndex = 0;
+            }
+            updateChoiceHighlight();
+        }
+        if (keyCode == Keyboard.ENTER || keyCode == Keyboard.SPACE) {
+            selectCurrentChoice();
+        }
+    }
+
+    private function updateChoiceHighlight():Void {
+        for (i in 0...choiceTextFields.length) {
+            var tf = choiceTextFields[i];
+            if (i == selectedChoiceIndex) {
+                tf.format.color = 0x0000FF;
+            } else {
+                tf.format.color = 0x000000;
+            }
+        }
+    }
+
+    private function selectCurrentChoice():Void {
+        if (currentChoices == null || selectedChoiceIndex < 0 || selectedChoiceIndex >= currentChoices.length) {
+            return;
+        }
+        var chosen = currentChoices[selectedChoiceIndex];
+        clearChoices();
+        currentIndex = chosen.nextIndex;
+        showCurrentLine();
     }
 
     private function closeDialogue():Void {
