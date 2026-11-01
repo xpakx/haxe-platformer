@@ -9,6 +9,7 @@ import openfl.media.Sound;
 import openfl.media.SoundChannel;
 import openfl.utils.Assets;
 import starling.display.Quad;
+import starling.display.DisplayObject;
 
 import js.Browser;
 
@@ -306,11 +307,7 @@ class Game extends Sprite {
         for (c in collectibles) {
             if (c.collected) continue;
 
-            var hit = (hero.x < c.x + c.width) &&
-                  (hero.x + hero.width > c.x) &&
-                  (hero.y < c.y + c.height) &&
-                  (hero.y + hero.height > c.y);
-
+            var hit = intersects(hero, c.quad);
             if (hit) {
                 c.collected = true;
                 world.removeChild(c.quad);
@@ -335,23 +332,18 @@ class Game extends Sprite {
         }
     }
 
-
     private function interact():Void {
         for (c in chars) {
             if (c.onInteraction == null) continue;
 
-            var hit = (hero.x < c.x + c.width) &&
-                  (hero.x + hero.width > c.x) &&
-                  (hero.y < c.y + c.height) &&
-                  (hero.y + hero.height > c.y);
-
+            var hit = intersects(hero, c.quad);
             if (hit) {
 	        c.onInteraction();
             }
         }
     }
 
-    private function intersects(first:Quad, second:Quad):Bool {
+    private function intersects(first:DisplayObject, second:DisplayObject):Bool {
         var firstRight = first.x + first.width;
         var firstLeft = first.x;
         var firstTop = first.y;
