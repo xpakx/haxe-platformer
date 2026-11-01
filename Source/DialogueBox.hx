@@ -49,6 +49,11 @@ class DialogueBox extends Sprite {
 
     private static inline var TILE_SIZE:Int = 50;
 
+    private var currentChoices:Array<DialogueChoice> = null;
+    private var selectedChoiceIndex:Int = 0;
+    private var choiceContainer:Sprite;
+    private var choiceTextFields:Array<TextField> = [];
+
     public function new(stageWidth:Float, stageHeight:Float) {
         super();
 
@@ -93,6 +98,11 @@ class DialogueBox extends Sprite {
         textField.format.horizontalAlign = "left";
         textField.format.verticalAlign = "top";
         addChild(textField);
+
+        choiceContainer = new Sprite();
+        choiceContainer.x = bg.x + bg.width - 120;
+        choiceContainer.y = bg.y - 120;
+        addChild(choiceContainer);
     }
 
     public function startDialogue(dialogueList:Array<DialogueLine>):Void {
@@ -115,6 +125,9 @@ class DialogueBox extends Sprite {
         nameField.visible = hasSpeaker;
 	if (hasSpeaker) nameField.text = line.speaker;
 
+        clearChoices();
+        currentChoices = line.choices;
+
         fullText = wrapText(line.text);
         displayedCharCount = 0;
         textField.text = "";
@@ -133,6 +146,9 @@ class DialogueBox extends Sprite {
 
             if (displayedCharCount >= fullText.length) {
                 isTyping = false;
+                if (currentChoices != null && currentChoices.length > 0) {
+                    displayChoices();
+                }
             }
         }
     }
@@ -291,5 +307,37 @@ class DialogueBox extends Sprite {
         );
 
         parent.addChild(image);
+    }
+
+
+    private function displayChoices():Void {
+        if (currentChoices == null || currentChoices.length == 0) return;
+
+        selectedChoiceIndex = 0;
+        choiceContainer.visible = true;
+
+        for (i in 0...currentChoices.length) {
+            var choice = currentChoices[i];
+        
+            var tf = new TextField(Std.int(bg.width - 40), 30, choice.text);
+            tf.y = i * 35;
+            tf.format.font = "Verdana";
+            tf.format.size = 20;
+            tf.format.color = (i == selectedChoiceIndex) ? 0x0000FF : 0x000000;
+            tf.format.horizontalAlign = "left";
+        
+            choiceContainer.addChild(tf);
+            choiceTextFields.push(tf);
+        }
+    }
+
+    private function clearChoices():Void {
+        choiceContainer.visible = false;
+        for (tf in choiceTextFields) {
+            choiceContainer.removeChild(tf);
+            tf.dispose();
+        }
+        choiceTextFields = [];
+        currentChoices = null;
     }
 }
