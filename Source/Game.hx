@@ -274,9 +274,10 @@ class Game extends Sprite {
             { speaker: null, text: "narrator test" },
             { speaker: "Hero", text: "test?", choices: [
 	        { text: "1", nextIndex: 4},
-	        { text: "2", nextIndex: 4},
+	        { text: "2", nextIndex: 5},
 	    ]},
-            { speaker: "Hero", text: "test test tst test test test" },
+            { speaker: "Hero", text: "Test 1", nextIndex: 10000 },
+            { speaker: "Hero", text: "Test 2" },
         ]);
     }
 

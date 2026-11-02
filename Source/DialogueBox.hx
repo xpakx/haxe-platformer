@@ -27,6 +27,7 @@ typedef DialogueLine = {
     var text: String;
     @:optional var choices: Array<DialogueChoice>;
     @:optional var portraitId: String;
+    @:optional var nextIndex: Int;
 }
 
 class DialogueBox extends Sprite {
@@ -167,7 +168,12 @@ class DialogueBox extends Sprite {
                 displayedCharCount = fullText.length;
                 textField.text = fullText;
             } else {
-                currentIndex++;
+		var line = dialogueQueue[currentIndex];
+		if (line.nextIndex != null) {
+		    currentIndex = line.nextIndex;
+		} else {
+                    currentIndex++;
+		}
                 showCurrentLine();
             }
         }
