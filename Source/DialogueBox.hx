@@ -62,6 +62,8 @@ class DialogueBox extends Sprite {
     private var boxWidth:Float;
     private var boxHeight:Float;
 
+    private var portraits:PortraitManager;
+
     public function new(stageWidth:Float, stageHeight:Float) {
         super();
 
@@ -118,6 +120,9 @@ class DialogueBox extends Sprite {
         portraitContainer.addChild(portraitBg);
         addChild(portraitContainer);
         portraitContainer.visible = false;
+
+	portraits = new PortraitManager();
+	portraits.initPortraits();
     }
 
     public function startDialogue(dialogueList:Array<DialogueLine>):Void {
