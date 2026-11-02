@@ -433,9 +433,8 @@ class DialogueBox extends Sprite {
             portraitImage = null;
         }
 
-        var path = "assets/" + portraitId + ".png";
-        if (Assets.exists(path)) {
-            var texture = Texture.fromData(Assets.getBitmapData(path));
+        var texture = portraits.get(portraitId);
+        if (texture != null) {
             portraitImage = new Image(texture);
             portraitImage.width = PORTRAIT_SIZE;
             portraitImage.height = PORTRAIT_SIZE;
