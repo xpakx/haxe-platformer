@@ -55,6 +55,10 @@ class DialogueBox extends Sprite {
     private var choiceContainer:Sprite;
     private var choiceTextFields:Array<TextField> = [];
 
+    private var portraitContainer:Sprite;
+    private var portraitImage:Image;
+    private static inline var PORTRAIT_SIZE:Int = 100;
+
     public function new(stageWidth:Float, stageHeight:Float) {
         super();
 
@@ -104,6 +108,14 @@ class DialogueBox extends Sprite {
         choiceContainer.x = bg.x + bg.width - 120;
         choiceContainer.y = bg.y - 120;
         addChild(choiceContainer);
+
+        portraitContainer = new Sprite();
+        portraitContainer.x = bg.x + 20;
+        portraitContainer.y = bg.y + (boxHeight - PORTRAIT_SIZE) / 2;
+        var portraitBg = new Quad(PORTRAIT_SIZE, PORTRAIT_SIZE, 0x222222);
+        portraitContainer.addChild(portraitBg);
+        addChild(portraitContainer);
+        portraitContainer.visible = false;
     }
 
     public function startDialogue(dialogueList:Array<DialogueLine>):Void {
@@ -134,6 +146,12 @@ class DialogueBox extends Sprite {
         textField.text = "";
         isTyping = true;
         timer = 0;
+
+        var hasPortrait = line.portraitId != null && line.portraitId.length > 0;
+        portraitContainer.visible = hasPortrait;
+        if (hasPortrait) {
+            updatePortrait(line.portraitId);
+        }
     }
 
     public function update(dt:Float):Void {
@@ -391,5 +409,23 @@ class DialogueBox extends Sprite {
         }
         choiceTextFields = [];
         currentChoices = null;
+    }
+
+
+    private function updatePortrait(portraitId:String):Void {
+        if (portraitImage != null) {
+            portraitContainer.removeChild(portraitImage);
+            portraitImage.dispose();
+            portraitImage = null;
+        }
+
+        var path = "assets/" + portraitId + ".png";
+        if (Assets.exists(path)) {
+            var texture = Texture.fromData(Assets.getBitmapData(path));
+            portraitImage = new Image(texture);
+            portraitImage.width = PORTRAIT_SIZE;
+            portraitImage.height = PORTRAIT_SIZE;
+            portraitContainer.addChild(portraitImage);
+        }
     }
 }
