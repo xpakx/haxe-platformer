@@ -59,12 +59,14 @@ class DialogueBox extends Sprite {
     private var portraitImage:Image;
     private static inline var PORTRAIT_SIZE:Int = 100;
 
+    private var boxWidth:Float;
+    private var boxHeight:Float;
+
     public function new(stageWidth:Float, stageHeight:Float) {
         super();
 
-
-        var boxWidth:Float = stageWidth - 100;
-        var boxHeight:Float = 150;
+        boxWidth = stageWidth - 100;
+        boxHeight = 150;
         bg = createBackground(mode, boxWidth, boxHeight);
         bg.x = 50;
         bg.y = stageHeight - boxHeight - 30;
@@ -138,6 +140,19 @@ class DialogueBox extends Sprite {
         nameField.visible = hasSpeaker;
 	if (hasSpeaker) nameField.text = line.speaker;
 
+        var hasPortrait = line.portraitId != null && line.portraitId.length > 0;
+        portraitContainer.visible = hasPortrait;
+	var basePadding = mode == Solid ? 20 : 20 + TILE_SIZE;
+        if (hasPortrait) {
+            updatePortrait(line.portraitId);
+            var leftOffset = basePadding + PORTRAIT_SIZE + 15;
+            textField.x = bg.x + leftOffset;
+            textField.width = Std.int(boxWidth - leftOffset - basePadding);
+        } else {
+            textField.x = bg.x + basePadding;
+            textField.width = Std.int(boxWidth - 2 * basePadding);
+        }
+
         clearChoices();
         currentChoices = line.choices;
 
@@ -146,12 +161,6 @@ class DialogueBox extends Sprite {
         textField.text = "";
         isTyping = true;
         timer = 0;
-
-        var hasPortrait = line.portraitId != null && line.portraitId.length > 0;
-        portraitContainer.visible = hasPortrait;
-        if (hasPortrait) {
-            updatePortrait(line.portraitId);
-        }
     }
 
     public function update(dt:Float):Void {
