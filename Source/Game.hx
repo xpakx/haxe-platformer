@@ -271,7 +271,7 @@ class Game extends Sprite {
         dialogueBox.startDialogue([
             { speaker: "Hero", text: "Blah blah blah" },
             { speaker: "Test", text: "test test test test", portraitId: "test" },
-            { speaker: null, text: "narrator test" },
+            { speaker: null, text: "narrator test", portraitId: "test" },
             { speaker: "Hero", text: "test?", choices: [
 	        { text: "1", nextIndex: 4},
 	        { text: "2", nextIndex: 5},

@@ -57,6 +57,7 @@ class DialogueBox extends Sprite {
 
     private var portraitContainer:Sprite;
     private var portraitImage:Image;
+    private var currentPortraitId:String = null;
     private static inline var PORTRAIT_SIZE:Int = 100;
 
     private var boxWidth:Float;
@@ -427,6 +428,8 @@ class DialogueBox extends Sprite {
 
 
     private function updatePortrait(portraitId:String):Void {
+        if (currentPortraitId == portraitId) return;
+
         if (portraitImage != null) {
             portraitContainer.removeChild(portraitImage);
             portraitImage.dispose();
