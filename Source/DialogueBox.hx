@@ -431,7 +431,12 @@ class DialogueBox extends Sprite {
             choiceContainer.removeChild(tf);
             tf.dispose();
         }
+        for (box in choiceBoxes) {
+            choiceContainer.removeChild(box);
+            box.dispose();
+        }
         choiceTextFields = [];
+        choiceBoxes = [];
         currentChoices = null;
     }
 
