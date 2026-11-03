@@ -237,9 +237,18 @@ class DialogueBox extends Sprite {
         for (i in 0...choiceTextFields.length) {
             var tf = choiceTextFields[i];
             if (i == selectedChoiceIndex) {
-                tf.format.color = 0x0000FF;
+                tf.format.color = 0xFFFF00;
             } else {
-                tf.format.color = 0x000000;
+                tf.format.color = 0xFFFFFF;
+            }
+        }
+
+        for (i in 0...choiceBoxes.length) {
+            var box = choiceBoxes[i];
+            if (i == selectedChoiceIndex) {
+                box.color = 0x555555;
+            } else {
+                box.color = 0x000000;
             }
         }
     }
@@ -405,16 +414,17 @@ class DialogueBox extends Sprite {
         for (i in 0...currentChoices.length) {
             var choice = currentChoices[i];
         
+	    var selected = (i == selectedChoiceIndex);
             var tf = new TextField(Std.int(bg.width - 40), 30, choice.text);
             tf.y = i * 35;
             tf.format.font = "Verdana";
             tf.format.size = 20;
-            tf.format.color = (i == selectedChoiceIndex) ? 0xFFFF00 : 0xFFFFFF;
+            tf.format.color = (selected ? 0xFFFF00 : 0xFFFFFF);
             tf.format.horizontalAlign = "left";
         
             choiceTextFields.push(tf);
 
-            var box = new Quad(bg.width - tf.x - 40, 30, 0x000000);
+            var box = new Quad(bg.width - tf.x - 40, 30, selected ? 0x555555 : 0x000000);
             box.x = tf.x - 20;
             box.y = tf.y;
 	    box.alpha = 0.8;
