@@ -54,6 +54,7 @@ class DialogueBox extends Sprite {
     private var selectedChoiceIndex:Int = 0;
     private var choiceContainer:Sprite;
     private var choiceTextFields:Array<TextField> = [];
+    private var choiceBoxes:Array<Quad> = [];
 
     private var portraitContainer:Sprite;
     private var portraitImage:Image;
@@ -408,11 +409,19 @@ class DialogueBox extends Sprite {
             tf.y = i * 35;
             tf.format.font = "Verdana";
             tf.format.size = 20;
-            tf.format.color = (i == selectedChoiceIndex) ? 0x0000FF : 0x000000;
+            tf.format.color = (i == selectedChoiceIndex) ? 0xFFFF00 : 0xFFFFFF;
             tf.format.horizontalAlign = "left";
         
-            choiceContainer.addChild(tf);
             choiceTextFields.push(tf);
+
+            var box = new Quad(bg.width - tf.x - 40, 30, 0x000000);
+            box.x = tf.x - 20;
+            box.y = tf.y;
+	    box.alpha = 0.8;
+	    choiceBoxes.push(box);
+
+	    choiceContainer.addChild(box);
+            choiceContainer.addChild(tf);
         }
     }
 
