@@ -23,4 +23,13 @@ class PortraitManager {
         var texture = Texture.fromData(Assets.getBitmapData(path));
 	portraits.set(key, texture);
     }
+
+    public function dispose():Void {
+        for (texture in portraits) {
+            if (texture != null) {
+                texture.dispose();
+            }
+        }
+        portraits.clear();
+    }
 }
