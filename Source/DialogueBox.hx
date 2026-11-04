@@ -493,4 +493,13 @@ class DialogueBox extends Sprite {
             portraitContainer.addChild(portraitImage);
         }
     }
+
+    override public function dispose():Void {
+        if (nameField != null) nameField.dispose();
+        if (textField != null) textField.dispose();
+        if (bg != null) bg.dispose();
+        if (portraitImage != null) portraitImage.dispose();
+        clearChoices();
+        super.dispose();
+    }
 }
