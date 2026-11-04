@@ -25,6 +25,11 @@ class SoundManager {
         }
     }
 
+    public function stop(key:String):Void {
+        if (!activeChannels.exists(key)) return;
+        activeChannels.get(key).stop();
+        activeChannels.remove(key);
+    }
 
     public function initSounds():Void {
         var jumpSound = Assets.getSound("audio/jump.ogg");
