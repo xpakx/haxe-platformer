@@ -24,6 +24,18 @@ class PortraitManager {
 	portraits.set(key, texture);
     }
 
+    public function exists(key:String):Bool {
+        return portraits.exists(key);
+    }
+
+    public function unloadPortrait(key:String):Void {
+        if (portraits.exists(key)) {
+            var texture = portraits.get(key);
+            if (texture != null) texture.dispose();
+            portraits.remove(key);
+        }
+    }
+
     public function dispose():Void {
         for (texture in portraits) {
             if (texture != null) {
