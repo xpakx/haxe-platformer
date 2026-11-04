@@ -2,10 +2,13 @@ package;
 
 import openfl.media.Sound;
 import openfl.utils.Assets;
+import openfl.media.SoundChannel;
+import openfl.events.Event;
 
 
 class SoundManager {
     private var soundLibrary:Map<String, Sound> = new Map();
+    private var activeChannels:Map<String, SoundChannel> = new Map();
 
     public function new() {
     }
@@ -13,7 +16,13 @@ class SoundManager {
     public function play(key:String) {
         var sound = soundLibrary.get(key);
 	if (sound == null) return;
-        sound.play(0, 0);
+        var channel = sound.play(0, 0);
+        if (channel != null) {
+            activeChannels.set(key, channel);
+            channel.addEventListener(Event.SOUND_COMPLETE, function(_) {
+                activeChannels.remove(key);
+            });
+        }
     }
 
 
