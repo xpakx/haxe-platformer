@@ -30,6 +30,13 @@ typedef DialogueLine = {
     @:optional var nextIndex: Int;
 }
 
+enum DialogueState {
+    Hidden;
+    Typing;
+    WaitingForInput;
+    SelectingChoice;
+}
+
 class DialogueBox extends Sprite {
     private var bg:DisplayObject;
     private var nameBox:DisplayObject;
@@ -43,7 +50,6 @@ class DialogueBox extends Sprite {
     private var displayedCharCount:Int = 0;
     private var timer:Float = 0;
     private var textSpeed:Float = 0.03;
-    private var isTyping:Bool = false;
     private var mode:DialogueBackgroundMode = Solid;
 
     public var onComplete:Void->Void;
@@ -65,6 +71,7 @@ class DialogueBox extends Sprite {
     private var boxHeight:Float;
 
     private var portraits:PortraitManager;
+    private var state:DialogueState = Hidden;
 
     public function new(stageWidth:Float, stageHeight:Float) {
         super();
@@ -131,6 +138,7 @@ class DialogueBox extends Sprite {
         dialogueQueue = dialogueList;
         currentIndex = 0;
         visible = true;
+	state = Typing;
         showCurrentLine();
     }
 
@@ -166,51 +174,66 @@ class DialogueBox extends Sprite {
         fullText = wrapText(line.text);
         displayedCharCount = 0;
         textField.text = "";
-        isTyping = true;
         timer = 0;
     }
 
     public function update(dt:Float):Void {
-        if (!visible || !isTyping) return;
+        switch (state) {
+            case Hidden, WaitingForInput, SelectingChoice:
+                return;
+            
+            case Typing:
+                timer += dt;
+                if (timer >= textSpeed) {
+                    timer = 0;
+                    displayedCharCount++;
+                    textField.text = fullText.substr(0, displayedCharCount);
 
-        timer += dt;
-        if (timer >= textSpeed) {
-            timer = 0;
-            displayedCharCount++;
-            textField.text = fullText.substr(0, displayedCharCount);
-
-            if (displayedCharCount >= fullText.length) {
-                isTyping = false;
-                if (currentChoices != null && currentChoices.length > 0) {
-                    displayChoices();
+                    if (displayedCharCount >= fullText.length) {
+                        if (currentChoices != null && currentChoices.length > 0) {
+                            state = SelectingChoice;
+                            displayChoices();
+                        } else {
+                            state = WaitingForInput;
+                        }
+                    }
                 }
-            }
         }
     }
 
     public function handleInput(keyCode:Int):Void {
-        if (!visible) return;
-
-        if (currentChoices != null && currentChoices.length > 0 && !isTyping) {
-	    handleChoice(keyCode);
-	    return;
-        }
-
-        if (keyCode == Keyboard.SPACE || keyCode == Keyboard.ENTER) {
-            if (isTyping) {
-                isTyping = false;
-                displayedCharCount = fullText.length;
-                textField.text = fullText;
-            } else {
-		var line = dialogueQueue[currentIndex];
-		if (line.nextIndex != null) {
-		    currentIndex = line.nextIndex;
-		} else {
-                    currentIndex++;
+        switch (state) {
+            case Hidden:
+                return;
+            
+            case Typing:
+                if (keyCode == Keyboard.SPACE || keyCode == Keyboard.ENTER) {
+                    displayedCharCount = fullText.length;
+                    textField.text = fullText;
+                    if (currentChoices != null && currentChoices.length > 0) {
+                        state = SelectingChoice;
+                        displayChoices();
+                    } else {
+                        state = WaitingForInput;
+                    }
+                }
+            
+            case WaitingForInput:
+		if (keyCode == Keyboard.SPACE || keyCode == Keyboard.ENTER) {
+		    var line = dialogueQueue[currentIndex];
+		    if (line.nextIndex != null) {
+			currentIndex = line.nextIndex;
+		    } else {
+			currentIndex++;
+		    }
+		    state = Typing;
+		    showCurrentLine();
 		}
-                showCurrentLine();
-            }
+            
+            case SelectingChoice:
+                handleChoice(keyCode);
         }
+
     }
 
     private function handleChoice(keyCode:Int):Void {
@@ -260,11 +283,13 @@ class DialogueBox extends Sprite {
         var chosen = currentChoices[selectedChoiceIndex];
         clearChoices();
         currentIndex = chosen.nextIndex;
+	state = Typing;
         showCurrentLine();
     }
 
     private function closeDialogue():Void {
         visible = false;
+	state = Hidden;
         if (onComplete != null) {
             onComplete();
         }
