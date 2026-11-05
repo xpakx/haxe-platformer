@@ -107,18 +107,15 @@ class Game extends Sprite {
 
     private function initPlatforms():Void {
         platforms = [
-        { x: 100, y: 700, width: 300, height: 20 },
-        { x: 500, y: 550, width: 250, height: 20 },
-        { x: 200, y: 400, width: 200, height: 20 },
-        { x: 0, y: 850, width: stage.stageWidth, height: 50 }
+            new Platform(100, 700, 300, 20),
+            new Platform(500, 550, 250, 20),
+            new Platform(200, 400, 200, 20),
+            new Platform(0, 850, stage.stageWidth, 50)
         ];
 
-	for (p in platforms) {
-	    var quad = new starling.display.Quad(p.width, p.height, 0x555555);
-	    quad.x = p.x;
-	    quad.y = p.y;
-	    world.addChild(quad);
-	}
+        for (p in platforms) {
+            world.addChild(p);
+        }
     }
 
     private function onKeyDown(e:KeyboardEvent):Void {
@@ -162,6 +159,7 @@ class Game extends Sprite {
         if (isDialogueActive) {
             dialogueBox.update(e.passedTime);
         }
+	for (p in platforms) p.update(e.passedTime);
         movement.updateTimers(e.passedTime);
         updateChar(e.passedTime);
         camera.update(e.passedTime);
