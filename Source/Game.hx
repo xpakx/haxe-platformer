@@ -180,11 +180,7 @@ class Game extends Sprite {
 
     private function getLandedPlatform(x:Float, y:Float, width:Float, height:Float, nextX: Float, nextY: Float):Platform {
 	for (p in platforms) {
-	    var hitX = (x + width > p.x) && (x < p.x + p.width);
-	    var floor = p.y - height;
-	    var crossedTop = (y <= floor) && (nextY >= floor);
-
-	    if (hitX && crossedTop) {
+	    if (p.landedOn(x, y, width, height, nextX, nextY)) {
 	        return p;
             }
 	}
@@ -193,13 +189,7 @@ class Game extends Sprite {
 
     public function isOnFloor(x:Float, y:Float, width:Float, height:Float):Bool {
         for (p in platforms) {
-            var hitX = (x + width > p.x) && (x < p.x + p.width);
-
-	    var floor = p.y - height;
-
-            var hitY = (y >= floor) && (y <= floor + 15);
-
-            if (hitX && hitY) {
+	    if (p.isOn(x, y, width, height)) {
                 return true;
             }
         }
