@@ -15,6 +15,7 @@ import js.Browser;
 import collectible.Collectible;
 import collectible.CollectibleType;
 import platform.Platform;
+import platform.CrumbleBehavior;
 import movement.MovementLogic;
 import movement.State;
 
@@ -112,7 +113,9 @@ class Game extends Sprite {
             new Platform(200, 400, 200, 20),
             new Platform(0, 850, stage.stageWidth, 50)
         ];
-
+        var crumblingPlatform = new Platform(900, 400, 250, 20)
+            .addBehavior(new CrumbleBehavior(1.5));
+        platforms.push(crumblingPlatform);
         for (p in platforms) {
             world.addChild(p);
         }
@@ -181,6 +184,7 @@ class Game extends Sprite {
     private function getLandedPlatform(x:Float, y:Float, width:Float, height:Float, nextX: Float, nextY: Float):Platform {
 	for (p in platforms) {
 	    if (p.landedOn(x, y, width, height, nextX, nextY)) {
+	        p.notifyLandedOn();
 	        return p;
             }
 	}
