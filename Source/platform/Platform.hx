@@ -6,6 +6,8 @@ import starling.display.Quad;
 class Platform extends Sprite {
     private var visual:Quad;
 
+    private var behaviors:Array<PlatformBehavior> = [];
+
     public function new(x:Float, y:Float, width:Float, height:Float) {
         super();
         this.x = x;
@@ -16,7 +18,15 @@ class Platform extends Sprite {
         addChild(visual);
     }
 
+    public function addBehavior(behavior:PlatformBehavior):Platform {
+        behaviors.push(behavior);
+        return this;
+    }
+
     public function update(dt:Float):Void {
+        for (b in behaviors) {
+            b.update(dt, this);
+        }
     }
 
 
@@ -35,4 +45,9 @@ class Platform extends Sprite {
             return (hitX && hitY);
  
     }
+
+    public function notifyLandedOn():Void {
+        for (b in behaviors) b.onLandedOn(this);
+    }
+
 }
