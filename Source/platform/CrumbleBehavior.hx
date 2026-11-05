@@ -17,6 +17,7 @@ class CrumbleBehavior implements PlatformBehavior {
 
         if (timer >= crumbleDelay) {
             platform.visible = false;
+	    platform.removed = true;
         }
     }
 

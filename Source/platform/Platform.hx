@@ -5,6 +5,7 @@ import starling.display.Quad;
 
 class Platform extends Sprite {
     private var visual:Quad;
+    public var removed:Bool = false;
 
     private var behaviors:Array<PlatformBehavior> = [];
 
@@ -31,6 +32,7 @@ class Platform extends Sprite {
 
 
     public function landedOn(x:Float, y:Float, width:Float, height:Float, nextX: Float, nextY: Float):Bool {
+        if (removed) return false;
 	var hitX = (x + width > this.x) && (x < this.x + this.width);
 	var floor = this.y - height;
 	var crossedTop = (y <= floor) && (nextY >= floor);
@@ -39,6 +41,7 @@ class Platform extends Sprite {
 
 
     public function isOn(x:Float, y:Float, width:Float, height:Float):Bool {
+            if (removed) return false;
             var hitX = (x + width > this.x) && (x < this.x + this.width);
 	    var floor = this.y - height;
             var hitY = (y >= floor) && (y <= floor + 15);
