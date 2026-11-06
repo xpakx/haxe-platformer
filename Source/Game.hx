@@ -17,6 +17,7 @@ import collectible.CollectibleType;
 import platform.Platform;
 import platform.CrumbleBehavior;
 import platform.ReappearBehavior;
+import platform.MoveBehavior;
 import movement.MovementLogic;
 import movement.State;
 
@@ -118,6 +119,10 @@ class Game extends Sprite {
             .addBehavior(new CrumbleBehavior(1.5))
             .addBehavior(new ReappearBehavior(4.0));
         platforms.push(crumblingPlatform);
+
+        var movingPlatform = new Platform(1200, 400, 50, 20)
+            .addBehavior(new MoveBehavior(1200, 1400, 2.0));
+        platforms.push(movingPlatform);
         for (p in platforms) {
             world.addChild(p);
         }
