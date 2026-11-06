@@ -51,6 +51,8 @@ class MovementLogic {
     public var soundManager: SoundManager;
     public var isOnFloor: (x:Float, y:Float, width:Float, height:Float) -> Bool;
 
+    public var platform:Platform;
+
     public function new(x:Float, y:Float, width:Float, height:Float, stageWidth:Float) {
         this.x = x;
         this.y = y;
@@ -163,6 +165,7 @@ class MovementLogic {
 
         if (landedPlatform != null) {
 	    y = landedPlatform.y - height;
+	    platform = landedPlatform;
 	    switchState(Floor);
 	    vy = 0;
 	    return;
@@ -209,6 +212,7 @@ class MovementLogic {
 
         if (landedPlatform != null) {
 	    y = landedPlatform.y - height;
+	    platform = landedPlatform;
 	    switchState(Floor);
 	    vy = 0;
 	    return;
