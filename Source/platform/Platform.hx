@@ -55,5 +55,4 @@ class Platform extends Sprite {
     public function notifyLandedOn():Void {
         for (b in behaviors) b.onLandedOn(this);
     }
-
 }

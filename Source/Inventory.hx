@@ -1,6 +1,8 @@
 package;
 
 import js.Browser;
+import item.ItemData;
+import item.ItemLibrary;
 using DefaultMap;
 
 class Inventory {
