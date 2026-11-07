@@ -69,6 +69,10 @@ class MovementLogic {
     }
 
 
+    public function preMove(dt:Float):Void {
+        x += platform.vx;
+    }
+
     public function move(dt:Float):Bool {
         var moveDir:Float = 0.0;
 	var moved:Bool = false;
@@ -238,6 +242,7 @@ class MovementLogic {
 	       fall(dt);
 	       move(dt);
 	    case Floor:
+	       preMove(dt);
 	       if (move(dt)) {
 	           onStartRun();
 	       } else {
