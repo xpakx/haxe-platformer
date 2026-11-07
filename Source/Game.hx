@@ -20,17 +20,9 @@ import platform.ReappearBehavior;
 import platform.MoveBehavior;
 import movement.MovementLogic;
 import movement.State;
+import npc.NPC;
 
 using Intersects;
-
-typedef NPC = {
-    var x:Float;
-    var y:Float;
-    var width:Float;
-    var height:Float;
-    var quad:starling.display.Quad;
-    var onInteraction: Void -> Void;
-}
 
 class Game extends Sprite {
     private var movement:MovementLogic;
@@ -287,11 +279,9 @@ class Game extends Sprite {
 
     private function initNPCs():Void {
 	    var color = 0xFFD700;
-            var quad = new starling.display.Quad(50, 70, color);
-            quad.x = 900;
-            quad.y = 780;
-            world.addChild(quad);
-	    var npc = {x: quad.x, y: quad.y, width: 30.0, height: 50.0, quad: quad, onInteraction: dialogueTest};
+            var npc = new NPC(900, 780, 30, 50, color);
+            world.addChild(npc);
+            npc.onInteraction = dialogueTest;
 	    chars.push(npc);
     }
 
@@ -347,7 +337,7 @@ class Game extends Sprite {
         for (c in chars) {
             if (c.onInteraction == null) continue;
 
-            var hit = hero.intersects(c.quad);
+            var hit = hero.intersects(c);
             if (hit) {
 	        c.onInteraction();
             }
