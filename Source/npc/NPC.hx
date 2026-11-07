@@ -7,6 +7,7 @@ import starling.display.Quad;
 class NPC extends Sprite {
     private var visual:Quad;
     public var onInteraction: Void -> Void;
+    private var behaviors:Array<NPCBehavior> = [];
     public var interactionRange:Float = 0.0;
 
     public function new(x:Float, y:Float, width:Float, height:Float, color:Int = 0xFFD700) {
@@ -20,12 +21,23 @@ class NPC extends Sprite {
         addChild(visual);
     }
 
+    public function addBehavior(behavior:NPCBehavior):NPC {
+        behaviors.push(behavior);
+        return this;
+    }
+
     public function update(dt:Float):Void {
+        for (b in behaviors) {
+            b.update(dt, this);
+        }
     }
 
     public function interact():Void {
         if (onInteraction != null) {
             onInteraction();
+        }
+        for (b in behaviors) {
+            b.onInteract(this);
         }
     }
 }

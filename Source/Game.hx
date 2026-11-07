@@ -169,6 +169,7 @@ class Game extends Sprite {
 	for (p in platforms) p.update(e.passedTime);
         movement.updateTimers(e.passedTime);
         updateChar(e.passedTime);
+        for (npc in chars) npc.update(e.passedTime);
         camera.update(e.passedTime);
 	updateCollectibles(e.passedTime);
     }
