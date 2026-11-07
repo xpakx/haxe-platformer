@@ -9,8 +9,8 @@ class Platform extends Sprite {
 
     private var behaviors:Array<PlatformBehavior> = [];
 
-    public var vx:Float = 0;
-    public var vy:Float = 0;
+    public var dx:Float = 0;
+    public var dy:Float = 0;
 
     public function new(x:Float, y:Float, width:Float, height:Float) {
         super();

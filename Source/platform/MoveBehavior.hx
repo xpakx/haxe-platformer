@@ -19,7 +19,7 @@ class MoveBehavior implements PlatformBehavior {
         var mid = startX + (endX - startX) / 2;
         
         platform.x = mid + offset;
-        platform.vx = platform.x - oldX;
+        platform.dx = platform.x - oldX;
     }
 
     public function onLandedOn(platform:Platform):Void {}

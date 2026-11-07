@@ -70,7 +70,7 @@ class MovementLogic {
 
 
     public function preMove(dt:Float):Void {
-        x += platform.vx;
+        x += platform.dx;
     }
 
     public function move(dt:Float):Bool {
