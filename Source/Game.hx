@@ -54,6 +54,8 @@ class Game extends Sprite {
 
     private var inventory:Inventory;
 
+    private var hud:HUDLayer;
+
     public function new() {
         super();
         addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
@@ -105,6 +107,9 @@ class Game extends Sprite {
         };
         addChild(dialogueBox);
 	inventory = new Inventory();
+
+        hud = new HUDLayer(stage.stageWidth);
+        addChild(hud);
     }
 
 
@@ -321,6 +326,7 @@ class Game extends Sprite {
                 switch (c.type) {
                     case Coin:
                         score++;
+			hud.updateScore(score);
                         Browser.console.log("Collected Coin! Score: " + score);
                     case Health:
                         Browser.console.log("Restored health!");
