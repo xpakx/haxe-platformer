@@ -324,8 +324,6 @@ class Game extends Sprite {
 
                     case Item:
                         inventory.add(c.itemId);
-			inventory.equipFromInventory(0, Boots);
-			inventory.equipFromInventory(0, Armor);
 
 		    case Resource:
                         Browser.console.log("Collected resource: " + c.itemId);

@@ -29,7 +29,8 @@ class Inventory {
 
         Browser.console.log("Equipped item: " + data.name);
         Browser.console.log("Rarity: " + data.rarity);
-        items.push(itemId);
+	var equipped = autoequip(data);
+	if (!equipped) items.push(itemId);
 	return true;
     }
 
@@ -106,5 +107,13 @@ class Inventory {
     public function hasEffect(effect: SpecialEffect): Bool {
         var count = effectProvidersCount.get(effect);
         return count != null && count > 0;
+    }
+
+    public function autoequip(data:ItemData):Bool {
+       if (data.slot == null) return false;
+       if (equipment.get(data.slot) != null) return false;
+       equip(data.slot, data.id);
+       addEffectProvider(data);
+       return true;
     }
 }
