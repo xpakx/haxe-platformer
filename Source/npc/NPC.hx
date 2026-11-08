@@ -26,6 +26,19 @@ class NPC extends Sprite {
         return this;
     }
 
+    public function removeBehavior(behavior:NPCBehavior):Bool {
+        return behaviors.remove(behavior);
+    }
+
+    public function getBehavior<T:NPCBehavior>(cls:Class<T>):T {
+        for (b in behaviors) {
+            if (Std.isOfType(b, cls)) {
+                return cast b;
+            }
+        }
+        return null;
+    }
+
     public function update(dt:Float):Void {
         for (b in behaviors) {
             b.update(dt, this);
