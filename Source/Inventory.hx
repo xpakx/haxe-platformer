@@ -8,22 +8,29 @@ using DefaultMap;
 class Inventory {
     private var items:Array<String> = [];
     private var equipment:Map<EquipmentSlot, String> = new Map();
+    private var maxCapacity:Int;
 
     public var effectProvidersCount: Map<SpecialEffect, Int> = new Map();
 
     public function new() {
+        maxCapacity = 30;
         ItemLibrary.init();
     }
 
-    public function add(itemId:String):Void {
+    public function add(itemId:String):Bool {
+        if (items.length >= maxCapacity) {
+            Browser.console.log("Inventory is full!");
+            return false;
+        }
 	var data = ItemLibrary.get(itemId);
         if (data == null) {
-            return;
+            return false;
         }
 
         Browser.console.log("Equipped item: " + data.name);
         Browser.console.log("Rarity: " + data.rarity);
         items.push(itemId);
+	return true;
     }
 
     public function equip(slot:EquipmentSlot, itemId:String):Void {
