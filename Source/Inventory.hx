@@ -48,6 +48,10 @@ class Inventory {
 
         var oldItem = equipment.get(slot);
         if (oldItem != null) {
+            var oldItemData = ItemLibrary.get(oldItem);
+            if (oldItemData != null) {
+                removeEffectProvider(oldItemData);
+            }
             items[index] = oldItem;
         } else {
             items.splice(index, 1);
