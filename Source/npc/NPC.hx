@@ -10,6 +10,10 @@ class NPC extends Sprite {
     private var behaviors:Array<NPCBehavior> = [];
     public var interactionRange:Float = 0.0;
 
+    public var flags:Map<String, Bool> = [];
+    public var id:String;
+    public var npcName:String;
+
     public function new(x:Float, y:Float, width:Float, height:Float, color:Int = 0xFFD700) {
         super();
         this.x = x;
@@ -52,5 +56,17 @@ class NPC extends Sprite {
         for (b in behaviors) {
             b.onInteract(this);
         }
+    }
+
+    public function setFlag(key:String):Void {
+        flags.set(key, true);
+    }
+
+    public function getFlag(key:String):Bool {
+        return flags.exists(key) ? flags.get(key) : false;
+    }
+
+    public function unsetFlag(key:String):Void {
+        flags.set(key, false);
     }
 }
