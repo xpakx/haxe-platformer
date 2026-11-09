@@ -18,19 +18,19 @@ class Inventory {
     }
 
     public function add(itemId:String):Bool {
-        if (items.length >= maxCapacity) {
-            Browser.console.log("Inventory is full!");
-            return false;
-        }
 	var data = ItemLibrary.get(itemId);
         if (data == null) {
             return false;
         }
-
-        Browser.console.log("Equipped item: " + data.name);
-        Browser.console.log("Rarity: " + data.rarity);
 	var equipped = autoequip(data);
-	if (!equipped) items.push(itemId);
+	if (equipped) return true;
+
+        if (items.length >= maxCapacity) {
+            Browser.console.log("Inventory is full!");
+            return false;
+        }
+
+        items.push(itemId);
 	return true;
     }
 
