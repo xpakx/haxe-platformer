@@ -2,6 +2,7 @@ package;
 
 import openfl.utils.Assets;
 import starling.textures.Texture;
+import js.Browser;
 
 
 class PortraitManager {
@@ -19,6 +20,10 @@ class PortraitManager {
     }
 
     public function loadPortrait(name:String, key:String) {
+        if (portraits.exists(key)) {
+	    Browser.console.log("Portraits already loaded");
+            return;
+        }
         var path = "assets/" + name;
         var texture = Texture.fromData(Assets.getBitmapData(path));
 	portraits.set(key, texture);

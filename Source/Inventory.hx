@@ -106,10 +106,10 @@ class Inventory {
     }
 
     public function autoequip(data:ItemData):Bool {
-       if (data.slot == null) return false;
-       if (equipment.get(data.slot) != null) return false;
-       equipment.set(data.slot, data.id);
-       addEffectProvider(data);
-       return true;
+        if (data.slot == null) return false;
+        if (equipment.get(data.slot) != null) return false;
+        equipment.set(data.slot, data.id);
+        addEffectProvider(data);
+        return true;
     }
 }
