@@ -1,4 +1,4 @@
-package;
+package dialogue;
 
 import starling.display.Sprite;
 import starling.display.Quad;
@@ -11,31 +11,6 @@ import openfl.utils.Assets;
 import openfl.geom.Rectangle;
 import starling.textures.Texture;
 import starling.text.TextFieldAutoSize;
-
-enum DialogueBackgroundMode {
-    Solid;
-    NineSlice;
-}
-
-typedef DialogueChoice = {
-    var text: String;
-    var nextIndex: Int;
-}
-
-typedef DialogueLine = {
-    var speaker: String;
-    var text: String;
-    @:optional var choices: Array<DialogueChoice>;
-    @:optional var portraitId: String;
-    @:optional var nextIndex: Int;
-}
-
-enum DialogueState {
-    Hidden;
-    Typing;
-    WaitingForInput;
-    SelectingChoice;
-}
 
 class DialogueBox extends Sprite {
     private var bg:DisplayObject;

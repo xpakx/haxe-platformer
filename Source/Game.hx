@@ -20,6 +20,7 @@ import platform.ReappearBehavior;
 import platform.MoveBehavior;
 import movement.MovementLogic;
 import movement.State;
+import dialogue.DialogueBox;
 import npc.NPC;
 
 using Intersects;
