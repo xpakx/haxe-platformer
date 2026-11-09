@@ -92,6 +92,10 @@ class Inventory {
     }
 
     public function unequipToInventory(slot:EquipmentSlot):Bool {
+        if (items.length >= maxCapacity) {
+            Browser.console.log("Inventory is full, cannot unequip!");
+            return false;
+        }
         var itemId = equipment.get(slot);
         if (itemId == null) return false;
 
