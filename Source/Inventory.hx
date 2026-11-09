@@ -34,16 +34,8 @@ class Inventory {
 	return true;
     }
 
-    public function equip(slot:EquipmentSlot, itemId:String):Void {
-        equipment.set(slot, itemId);
-    }
-
     public function getEquipped(slot:EquipmentSlot):String {
         return equipment.get(slot);
-    }
-
-    public function unequip(slot:EquipmentSlot):Void {
-        equipment.remove(slot);
     }
 
     public function equipFromInventory(index:Int, slot:EquipmentSlot):Bool {
@@ -116,7 +108,7 @@ class Inventory {
     public function autoequip(data:ItemData):Bool {
        if (data.slot == null) return false;
        if (equipment.get(data.slot) != null) return false;
-       equip(data.slot, data.id);
+       equipment.set(data.slot, data.id);
        addEffectProvider(data);
        return true;
     }
