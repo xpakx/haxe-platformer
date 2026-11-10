@@ -6,8 +6,14 @@ import platform.CrumbleBehavior;
 import platform.ReappearBehavior;
 import platform.MoveBehavior;
 
+import collectible.Collectible;
+import collectible.CollectibleType;
+import js.Browser;
+
 class GameStage extends Sprite {
     public var platforms:Array<Platform> = [];
+    public var collectibles:Array<Collectible> = [];
+
     public var stageWidth:Float;
     public var stageHeight:Float;
     public var heroSpawnX:Float;
@@ -20,6 +26,7 @@ class GameStage extends Sprite {
 	heroSpawnX = stageWidth / 2;
         heroSpawnY = stageHeight - 300;
         initPlatforms();
+	initCollectibles();
     }
 
     private function initPlatforms():Void {
@@ -39,6 +46,24 @@ class GameStage extends Sprite {
         platforms.push(movingPlatform);
         for (p in platforms) {
             addChild(p);
+        }
+    }
+
+    private function initCollectibles():Void {
+        collectibles = [
+            { x: 230, y: 640, width: 20, height: 20, collected: false, quad: null, type: Coin, itemId: "score" },
+            { x: 610, y: 490, width: 20, height: 20, collected: false, quad: null, type: Coin, itemId: "score" },
+            { x: 290, y: 340, width: 20, height: 20, collected: false, quad: null, type: Item, itemId: "speed_boots" },
+            { x: 290, y: 640, width: 20, height: 20, collected: false, quad: null, type: Item, itemId: "cape" }
+        ];
+
+        for (c in collectibles) {
+	    var color = (c.type == Item) ? 0x00FFFF : 0xFFD700;
+            var quad = new starling.display.Quad(c.width, c.height, color);
+            quad.x = c.x;
+            quad.y = c.y;
+            c.quad = quad;
+            addChild(quad);
         }
     }
 

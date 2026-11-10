@@ -12,8 +12,6 @@ import starling.display.Quad;
 
 import js.Browser;
 
-import collectible.Collectible;
-import collectible.CollectibleType;
 import platform.Platform;
 import platform.CrumbleBehavior;
 import platform.ReappearBehavior;
@@ -42,7 +40,6 @@ class Game extends Sprite {
     private var dialogueBox:DialogueBox;
     private var isDialogueActive:Bool = false;
 
-    private var collectibles:Array<Collectible> = [];
     private var score:Int = 0;
     private var chars:Array<NPC> = [];
 
@@ -84,7 +81,6 @@ class Game extends Sprite {
 
 	movement.switchState(movement.state);
 
-	initCollectibles();
 	initNPCs();
 	world.addChild(hero);
         camera.setTarget(hero);
@@ -250,32 +246,26 @@ class Game extends Sprite {
 	    chars.push(npc);
     }
 
-    private function initCollectibles():Void {
-        collectibles = [
-            { x: 230, y: 640, width: 20, height: 20, collected: false, quad: null, type: Coin, itemId: "score" },
-            { x: 610, y: 490, width: 20, height: 20, collected: false, quad: null, type: Coin, itemId: "score" },
-            { x: 290, y: 340, width: 20, height: 20, collected: false, quad: null, type: Item, itemId: "speed_boots" },
-            { x: 290, y: 640, width: 20, height: 20, collected: false, quad: null, type: Item, itemId: "cape" }
-        ];
+    private function interact():Void {
+        for (c in chars) {
+            if (c.onInteraction == null) continue;
 
-        for (c in collectibles) {
-	    var color = (c.type == Item) ? 0x00FFFF : 0xFFD700;
-            var quad = new starling.display.Quad(c.width, c.height, color);
-            quad.x = c.x;
-            quad.y = c.y;
-            c.quad = quad;
-            world.addChild(quad);
+            var hit = hero.intersects(c);
+            if (hit) {
+	        c.onInteraction();
+            }
         }
     }
 
+
     private function updateCollectibles(dt:Float):Void {
-        for (c in collectibles) {
+        for (c in currentStage.collectibles) {
             if (c.collected) continue;
 
             var hit = hero.intersects(c.quad);
             if (hit) {
                 c.collected = true;
-                world.removeChild(c.quad);
+                currentStage.removeChild(c.quad);
                 c.quad = null;
             
                 switch (c.type) {
@@ -295,17 +285,5 @@ class Game extends Sprite {
             }
         }
     }
-
-    private function interact():Void {
-        for (c in chars) {
-            if (c.onInteraction == null) continue;
-
-            var hit = hero.intersects(c);
-            if (hit) {
-	        c.onInteraction();
-            }
-        }
-    }
-
 }
 
