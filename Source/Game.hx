@@ -28,6 +28,7 @@ using Intersects;
 class Game extends Sprite {
     private var movement:MovementLogic;
     private var hero:TestCharacter;
+    private var currentStage:GameStage;
 
 
     private var platforms:Array<Platform> = [];
@@ -61,12 +62,15 @@ class Game extends Sprite {
         addChild(world);
         camera = new Camera2D(world, stage.stageWidth, stage.stageHeight);
 
+        currentStage = new GameStage();
+        world.addChild(currentStage);
+
 	hero = new TestCharacter();
 	hero.x = stage.stageWidth / 2;
 	hero.y = stage.stageHeight - 1000;
 	hero.scaleX = 0.5;
 	hero.scaleY = 0.5;
-	movement = new MovementLogic(hero.x, hero.y, hero.width, hero.height, stage.stageWidth);
+	movement = new MovementLogic(hero.x, hero.y, hero.width, hero.height, 2000);
 	movement.onStartFall = hero.startFall;
 	movement.onStartJump = hero.startJump;
 	movement.onStartDoubleJump = hero.startDoubleJump;
@@ -74,12 +78,11 @@ class Game extends Sprite {
 	movement.onEndRun = hero.endRun;
 	movement.onStartRun = hero.startRun;
 	movement.isUnlocked = this.stateIsUnlocked;
-	movement.getLandedPlatform = this.getLandedPlatform;
-	movement.isOnFloor = this.isOnFloor;
+	movement.getLandedPlatform = currentStage.getLandedPlatform;
+	movement.isOnFloor = currentStage.isOnFloor;
 
 	movement.switchState(movement.state);
 
-	initPlatforms();
 	initCollectibles();
 	initNPCs();
 	world.addChild(hero);
@@ -103,27 +106,6 @@ class Game extends Sprite {
 
         hud = new HUDLayer(stage.stageWidth);
         addChild(hud);
-    }
-
-
-    private function initPlatforms():Void {
-        platforms = [
-            new Platform(100, 700, 300, 20),
-            new Platform(500, 550, 250, 20),
-            new Platform(200, 400, 200, 20),
-            new Platform(0, 850, stage.stageWidth, 50)
-        ];
-        var crumblingPlatform = new Platform(900, 400, 250, 20)
-            .addBehavior(new CrumbleBehavior(1.5))
-            .addBehavior(new ReappearBehavior(4.0));
-        platforms.push(crumblingPlatform);
-
-        var movingPlatform = new Platform(1200, 400, 50, 20)
-            .addBehavior(new MoveBehavior(1200, 1400, 2.0));
-        platforms.push(movingPlatform);
-        for (p in platforms) {
-            world.addChild(p);
-        }
     }
 
     private function onKeyDown(e:KeyboardEvent):Void {
@@ -167,7 +149,7 @@ class Game extends Sprite {
         if (isDialogueActive) {
             dialogueBox.update(e.passedTime);
         }
-	for (p in platforms) p.update(e.passedTime);
+	currentStage.update(e.passedTime);
         movement.updateTimers(e.passedTime);
         updateChar(e.passedTime);
         for (npc in chars) npc.update(e.passedTime);
@@ -184,26 +166,6 @@ class Game extends Sprite {
         hero.x = movement.x;
 	hero.y = movement.y;
 	hero.scaleX = movement.scaleX;
-    }
-
-
-    private function getLandedPlatform(x:Float, y:Float, width:Float, height:Float, nextX: Float, nextY: Float):Platform {
-	for (p in platforms) {
-	    if (p.landedOn(x, y, width, height, nextX, nextY)) {
-	        p.notifyLandedOn();
-	        return p;
-            }
-	}
-	return null;
-    }
-
-    public function isOnFloor(x:Float, y:Float, width:Float, height:Float):Bool {
-        for (p in platforms) {
-	    if (p.isOn(x, y, width, height)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 
@@ -229,7 +191,7 @@ class Game extends Sprite {
         var chestY = hero.y + (hero.height * 0.3);
 
         var hitPlatform:Platform = null;
-        for (p in platforms) {
+        for (p in currentStage.platforms) {
 	    if (chestY < p.y || chestY > p.y + p.height) {
 	        continue;
 	    }
@@ -251,7 +213,7 @@ class Game extends Sprite {
         var headY = hitPlatform.y - hero.height;
         var headX = hero.x + (facingDir * 10);
 
-        for (p in platforms) {
+        for (p in currentStage.platforms) {
             if (p == hitPlatform) continue;
             if (headX + hero.width > p.x && headX < p.x + p.width &&
                 headY + hero.height > p.y && headY < p.y + p.height) {
