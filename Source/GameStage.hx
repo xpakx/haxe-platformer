@@ -8,9 +8,17 @@ import platform.MoveBehavior;
 
 class GameStage extends Sprite {
     public var platforms:Array<Platform> = [];
+    public var stageWidth:Float;
+    public var stageHeight:Float;
+    public var heroSpawnX:Float;
+    public var heroSpawnY:Float;
 
     public function new() {
         super();
+	stageWidth = 2000;
+	stageHeight = 1000;
+	heroSpawnX = stageWidth / 2;
+        heroSpawnY = stageHeight - 300;
         initPlatforms();
     }
 
@@ -19,7 +27,7 @@ class GameStage extends Sprite {
             new Platform(100, 700, 300, 20),
             new Platform(500, 550, 250, 20),
             new Platform(200, 400, 200, 20),
-            new Platform(0, 850, 2000, 50)
+            new Platform(0, stageHeight - 50, stageWidth, 50)
         ];
         var crumblingPlatform = new Platform(900, 400, 250, 20)
             .addBehavior(new CrumbleBehavior(1.5))

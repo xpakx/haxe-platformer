@@ -60,17 +60,18 @@ class Game extends Sprite {
 
         world = new Sprite();
         addChild(world);
-        camera = new Camera2D(world, stage.stageWidth, stage.stageHeight);
 
         currentStage = new GameStage();
         world.addChild(currentStage);
 
+        camera = new Camera2D(world, stage.stageWidth, stage.stageHeight);
+
 	hero = new TestCharacter();
-	hero.x = stage.stageWidth / 2;
-	hero.y = stage.stageHeight - 1000;
+	hero.x = currentStage.heroSpawnX;
+	hero.y = currentStage.heroSpawnY;
 	hero.scaleX = 0.5;
 	hero.scaleY = 0.5;
-	movement = new MovementLogic(hero.x, hero.y, hero.width, hero.height, 2000);
+	movement = new MovementLogic(hero.x, hero.y, hero.width, hero.height, currentStage.stageWidth);
 	movement.onStartFall = hero.startFall;
 	movement.onStartJump = hero.startJump;
 	movement.onStartDoubleJump = hero.startDoubleJump;
