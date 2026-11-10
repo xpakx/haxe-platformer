@@ -71,7 +71,7 @@ class Game extends Sprite {
 	hero.y = currentStage.heroSpawnY;
 	hero.scaleX = 0.5;
 	hero.scaleY = 0.5;
-	movement = new MovementLogic(hero.x, hero.y, hero.width, hero.height, currentStage.stageWidth);
+	movement = new MovementLogic(hero.x, hero.y, hero.width, hero.height, currentStage.stageWidth, currentStage.stageHeight);
 	movement.onStartFall = hero.startFall;
 	movement.onStartJump = hero.startJump;
 	movement.onStartDoubleJump = hero.startDoubleJump;

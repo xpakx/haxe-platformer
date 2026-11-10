@@ -12,6 +12,7 @@ class MovementLogic {
     public var height:Float;
     public var scaleX:Float = 0.5;
     public var stageWidth:Float;
+    public var stageHeight:Float;
 
     private static inline var ACCELERATION:Float = 4500.0;
     private static inline var MAX_SPEED:Float = 500.0;
@@ -53,12 +54,13 @@ class MovementLogic {
 
     public var platform:Platform;
 
-    public function new(x:Float, y:Float, width:Float, height:Float, stageWidth:Float) {
+    public function new(x:Float, y:Float, width:Float, height:Float, stageWidth:Float, stageHeight:Float) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.stageWidth = stageWidth;
+        this.stageHeight = stageHeight;
 
     }
 
@@ -176,8 +178,8 @@ class MovementLogic {
 	}
         y = nextY;
 
-        if (y > 900) {
-            y = 900;
+        if (y > stageHeight - height) {
+            y = stageHeight - height;
             switchState(Floor);
             vy = 0;
         }
@@ -223,8 +225,8 @@ class MovementLogic {
 	}
         y = nextY;
 
-        if (y > 900) {
-            y = 900;
+        if (y > stageHeight - height) {
+            y = stageHeight - height;
             switchState(Floor);
             vy = 0;
         }
