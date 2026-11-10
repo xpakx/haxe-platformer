@@ -28,10 +28,6 @@ class Game extends Sprite {
     private var hero:TestCharacter;
     private var currentStage:GameStage;
 
-
-    private var platforms:Array<Platform> = [];
-
-
     private var soundManager:SoundManager;
 
     private var world:Sprite;
@@ -64,10 +60,7 @@ class Game extends Sprite {
         camera = new Camera2D(world, stage.stageWidth, stage.stageHeight);
 
 	hero = new TestCharacter();
-	hero.x = currentStage.heroSpawnX;
-	hero.y = currentStage.heroSpawnY;
-	hero.scaleX = 0.5;
-	hero.scaleY = 0.5;
+	currentStage.addHero(hero);
 	movement = new MovementLogic(hero.x, hero.y, hero.width, hero.height, currentStage.stageWidth, currentStage.stageHeight);
 	movement.onStartFall = hero.startFall;
 	movement.onStartJump = hero.startJump;
@@ -82,7 +75,6 @@ class Game extends Sprite {
 	movement.switchState(movement.state);
 
 	initNPCs();
-	world.addChild(hero);
         camera.setTarget(hero);
 	camera.snapToTarget();
         stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);

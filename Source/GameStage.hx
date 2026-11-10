@@ -29,6 +29,14 @@ class GameStage extends Sprite {
 	initCollectibles();
     }
 
+    public function addHero(hero:TestCharacter):Void {
+	hero.x = heroSpawnX;
+	hero.y = heroSpawnY;
+	hero.scaleX = 0.5;
+	hero.scaleY = 0.5;
+	addChild(hero);
+    }
+
     private function initPlatforms():Void {
         platforms = [
             new Platform(100, 700, 300, 20),
