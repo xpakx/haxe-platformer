@@ -24,7 +24,6 @@ import npc.NPC;
 using Intersects;
 
 class Game extends Sprite {
-    private var movement:MovementLogic;
     private var hero:TestCharacter;
     private var currentStage:GameStage;
 
@@ -60,18 +59,18 @@ class Game extends Sprite {
 	inventory = new Inventory();
 	hero = new TestCharacter();
 	currentStage.addHero(hero, inventory);
-	movement = new MovementLogic(hero.x, hero.y, hero.width, hero.height, currentStage.stageWidth, currentStage.stageHeight);
-	movement.onStartFall = hero.startFall;
-	movement.onStartJump = hero.startJump;
-	movement.onStartDoubleJump = hero.startDoubleJump;
-	movement.onStartFloat = hero.startFloat;
-	movement.onEndRun = hero.endRun;
-	movement.onStartRun = hero.startRun;
-	movement.isUnlocked = this.stateIsUnlocked;
-	movement.getLandedPlatform = currentStage.getLandedPlatform;
-	movement.isOnFloor = currentStage.isOnFloor;
+	currentStage.movement = new MovementLogic(hero.x, hero.y, hero.width, hero.height, currentStage.stageWidth, currentStage.stageHeight);
+	currentStage.movement.onStartFall = hero.startFall;
+	currentStage.movement.onStartJump = hero.startJump;
+	currentStage.movement.onStartDoubleJump = hero.startDoubleJump;
+	currentStage.movement.onStartFloat = hero.startFloat;
+	currentStage.movement.onEndRun = hero.endRun;
+	currentStage.movement.onStartRun = hero.startRun;
+	currentStage.movement.isUnlocked = this.stateIsUnlocked;
+	currentStage.movement.getLandedPlatform = currentStage.getLandedPlatform;
+	currentStage.movement.isOnFloor = currentStage.isOnFloor;
 
-	movement.switchState(movement.state);
+	currentStage.movement.switchState(currentStage.movement.state);
 
 	initNPCs();
         camera.setTarget(hero);
@@ -81,7 +80,7 @@ class Game extends Sprite {
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
 	soundManager = new SoundManager();
 	soundManager.initSounds();
-	movement.soundManager = soundManager;
+	currentStage.movement.soundManager = soundManager;
 
 
         dialogueBox = new DialogueBox(stage.stageWidth, stage.stageHeight);
@@ -100,36 +99,11 @@ class Game extends Sprite {
             dialogueBox.handleInput(e.keyCode);
             return;
         }
-        if (e.keyCode == Keyboard.LEFT || e.keyCode == Keyboard.A) {
-	    movement.leftPressed = true;
-	} 
-        if (e.keyCode == Keyboard.RIGHT || e.keyCode == Keyboard.D) {
-	    movement.rightPressed = true;
-	}
-        if (e.keyCode == Keyboard.SPACE) {
-	    if (!movement.spacePressed) {
-	       movement.spaceJustPressed = true;
-	    } else {
-	       movement.spaceJustPressed = false;
-	    }
-	    movement.spacePressed = true;
-	}
-        if (e.keyCode == Keyboard.ENTER) {
-	    currentStage.interact();
-	}
+	currentStage.onKeyDown(e);
     }
 
     private function onKeyUp(e:KeyboardEvent):Void {
-        if (e.keyCode == Keyboard.LEFT || e.keyCode == Keyboard.A) {
-	    movement.leftPressed = false;
-	} 
-        if (e.keyCode == Keyboard.RIGHT || e.keyCode == Keyboard.D) {
-	    movement.rightPressed = false;
-	}
-        if (e.keyCode == Keyboard.SPACE) {
-	    movement.spacePressed = false;
-            movement.spaceJustPressed = false;
-	}
+	currentStage.onKeyUp(e);
     }
 
     private function onEnterFrame(e:EnterFrameEvent):Void {
@@ -143,14 +117,14 @@ class Game extends Sprite {
     }
 
     private function updateChar(dt:Float):Void {
-	movement.update(dt);
+	currentStage.movement.update(dt);
 	updateHeroSprite();
     }
 
     private function updateHeroSprite():Void {
-        hero.x = movement.x;
-	hero.y = movement.y;
-	hero.scaleX = movement.scaleX;
+        hero.x = currentStage.movement.x;
+	hero.y = currentStage.movement.y;
+	hero.scaleX = currentStage.movement.scaleX;
     }
 
 
@@ -163,9 +137,9 @@ class Game extends Sprite {
 	    case Jump:
 	       return true;
 	    case DoubleJump:
-	       return inventory.hasEffect(DoubleJumpAbility) && movement.canDoubleJump;
+	       return inventory.hasEffect(DoubleJumpAbility) && currentStage.movement.canDoubleJump;
 	    case FloatState:
-	       return inventory.hasEffect(FloatAbility) && movement.floatCooldown <= 0.0 && movement.canFloat;
+	       return inventory.hasEffect(FloatAbility) && currentStage.movement.floatCooldown <= 0.0 && currentStage.movement.canFloat;
 	}
     }
 

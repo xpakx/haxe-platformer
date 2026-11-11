@@ -6,10 +6,13 @@ import platform.CrumbleBehavior;
 import platform.ReappearBehavior;
 import platform.MoveBehavior;
 import npc.NPC;
+import movement.MovementLogic;
 
 import collectible.Collectible;
 import collectible.CollectibleType;
 import js.Browser;
+import starling.events.KeyboardEvent;
+import openfl.ui.Keyboard;
 
 using Intersects;
 
@@ -20,6 +23,7 @@ class GameStage extends Sprite {
 
     private var hero:TestCharacter;
     private var inventory:Inventory;
+    public var movement:MovementLogic;
     public var score:Int = 0;
 
     public var stageWidth:Float;
@@ -147,5 +151,39 @@ class GameStage extends Sprite {
                 }
             }
         }
+    }
+
+
+    public function onKeyDown(e:KeyboardEvent):Void {
+        if (e.keyCode == Keyboard.LEFT || e.keyCode == Keyboard.A) {
+	    movement.leftPressed = true;
+	} 
+        if (e.keyCode == Keyboard.RIGHT || e.keyCode == Keyboard.D) {
+	    movement.rightPressed = true;
+	}
+        if (e.keyCode == Keyboard.SPACE) {
+	    if (!movement.spacePressed) {
+	       movement.spaceJustPressed = true;
+	    } else {
+	       movement.spaceJustPressed = false;
+	    }
+	    movement.spacePressed = true;
+	}
+        if (e.keyCode == Keyboard.ENTER) {
+	    interact();
+	}
+    }
+
+    public function onKeyUp(e:KeyboardEvent):Void {
+        if (e.keyCode == Keyboard.LEFT || e.keyCode == Keyboard.A) {
+	    movement.leftPressed = false;
+	} 
+        if (e.keyCode == Keyboard.RIGHT || e.keyCode == Keyboard.D) {
+	    movement.rightPressed = false;
+	}
+        if (e.keyCode == Keyboard.SPACE) {
+	    movement.spacePressed = false;
+            movement.spaceJustPressed = false;
+	}
     }
 }
