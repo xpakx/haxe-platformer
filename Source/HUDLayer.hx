@@ -5,6 +5,7 @@ import starling.text.TextField;
 
 class HUDLayer extends Sprite {
     private var scoreField:TextField;
+    private var cachedScore:Int;
 
     public function new(stageWidth:Float) {
         super();
@@ -21,6 +22,8 @@ class HUDLayer extends Sprite {
     }
 
     public function updateScore(newScore:Int):Void {
+        if (cachedScore == newScore) return;
         scoreField.text = "Score: " + newScore;
+	cachedScore = newScore;
     }
 }
