@@ -137,7 +137,6 @@ class Game extends Sprite {
             dialogueBox.update(e.passedTime);
         }
 	currentStage.update(e.passedTime);
-        movement.updateTimers(e.passedTime);
         updateChar(e.passedTime);
         camera.update(e.passedTime);
 	hud.updateScore(currentStage.score);

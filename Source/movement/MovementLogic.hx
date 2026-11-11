@@ -64,7 +64,7 @@ class MovementLogic {
 
     }
 
-    public function updateTimers(dt:Float):Void {
+    private function updateTimers(dt:Float):Void {
         if (floatCooldown > 0.0) {
 	    floatCooldown -= dt;
 	}
@@ -239,6 +239,7 @@ class MovementLogic {
 
 
     public function update(dt:Float):Void {
+        updateTimers(dt);
         switch(state) {
 	    case Fall:
 	       fall(dt);
