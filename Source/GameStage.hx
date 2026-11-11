@@ -15,10 +15,12 @@ using Intersects;
 
 class GameStage extends Sprite {
     public var platforms:Array<Platform> = [];
-    public var collectibles:Array<Collectible> = [];
+    private var collectibles:Array<Collectible> = [];
     public var chars:Array<NPC> = [];
 
     private var hero:TestCharacter;
+    private var inventory:Inventory;
+    public var score:Int = 0;
 
     public var stageWidth:Float;
     public var stageHeight:Float;
@@ -35,13 +37,14 @@ class GameStage extends Sprite {
 	initCollectibles();
     }
 
-    public function addHero(hero:TestCharacter):Void {
+    public function addHero(hero:TestCharacter, inventory:Inventory):Void {
 	hero.x = heroSpawnX;
 	hero.y = heroSpawnY;
 	hero.scaleX = 0.5;
 	hero.scaleY = 0.5;
 	this.hero = hero;
 	addChild(hero);
+	this.inventory = inventory;
     }
 
     private function initPlatforms():Void {
@@ -85,6 +88,7 @@ class GameStage extends Sprite {
     public function update(dt:Float):Void {
         for (p in platforms) p.update(dt);
         for (npc in chars) npc.update(dt);
+	updateCollectibles(dt);
     }
 
     public function getLandedPlatform(x:Float, y:Float, width:Float, height:Float, nextX: Float, nextY: Float):Platform {
@@ -117,4 +121,31 @@ class GameStage extends Sprite {
         }
     }
 
+
+    private function updateCollectibles(dt:Float):Void {
+        for (c in collectibles) {
+            if (c.collected) continue;
+
+            var hit = hero.intersects(c.quad);
+            if (hit) {
+                c.collected = true;
+                removeChild(c.quad);
+                c.quad = null;
+            
+                switch (c.type) {
+                    case Coin:
+                        score++;
+                        Browser.console.log("Collected Coin! Score: " + score);
+                    case Health:
+                        Browser.console.log("Restored health!");
+
+                    case Item:
+                        inventory.add(c.itemId);
+
+		    case Resource:
+                        Browser.console.log("Collected resource: " + c.itemId);
+                }
+            }
+        }
+    }
 }

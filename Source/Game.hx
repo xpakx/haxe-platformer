@@ -36,7 +36,6 @@ class Game extends Sprite {
     private var dialogueBox:DialogueBox;
     private var isDialogueActive:Bool = false;
 
-    private var score:Int = 0;
 
     private var inventory:Inventory;
 
@@ -58,8 +57,9 @@ class Game extends Sprite {
 
         camera = new Camera2D(world, stage.stageWidth, stage.stageHeight);
 
+	inventory = new Inventory();
 	hero = new TestCharacter();
-	currentStage.addHero(hero);
+	currentStage.addHero(hero, inventory);
 	movement = new MovementLogic(hero.x, hero.y, hero.width, hero.height, currentStage.stageWidth, currentStage.stageHeight);
 	movement.onStartFall = hero.startFall;
 	movement.onStartJump = hero.startJump;
@@ -90,7 +90,6 @@ class Game extends Sprite {
             isDialogueActive = false;
         };
         addChild(dialogueBox);
-	inventory = new Inventory();
 
         hud = new HUDLayer(stage.stageWidth);
         addChild(hud);
@@ -141,8 +140,7 @@ class Game extends Sprite {
         movement.updateTimers(e.passedTime);
         updateChar(e.passedTime);
         camera.update(e.passedTime);
-	updateCollectibles(e.passedTime);
-	hud.updateScore(score);
+	hud.updateScore(currentStage.score);
     }
 
     private function updateChar(dt:Float):Void {
@@ -238,31 +236,5 @@ class Game extends Sprite {
     }
 
 
-    private function updateCollectibles(dt:Float):Void {
-        for (c in currentStage.collectibles) {
-            if (c.collected) continue;
-
-            var hit = hero.intersects(c.quad);
-            if (hit) {
-                c.collected = true;
-                currentStage.removeChild(c.quad);
-                c.quad = null;
-            
-                switch (c.type) {
-                    case Coin:
-                        score++;
-                        Browser.console.log("Collected Coin! Score: " + score);
-                    case Health:
-                        Browser.console.log("Restored health!");
-
-                    case Item:
-                        inventory.add(c.itemId);
-
-		    case Resource:
-                        Browser.console.log("Collected resource: " + c.itemId);
-                }
-            }
-        }
-    }
 }
 
