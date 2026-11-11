@@ -5,14 +5,20 @@ import platform.Platform;
 import platform.CrumbleBehavior;
 import platform.ReappearBehavior;
 import platform.MoveBehavior;
+import npc.NPC;
 
 import collectible.Collectible;
 import collectible.CollectibleType;
 import js.Browser;
 
+using Intersects;
+
 class GameStage extends Sprite {
     public var platforms:Array<Platform> = [];
     public var collectibles:Array<Collectible> = [];
+    public var chars:Array<NPC> = [];
+
+    private var hero:TestCharacter;
 
     public var stageWidth:Float;
     public var stageHeight:Float;
@@ -34,6 +40,7 @@ class GameStage extends Sprite {
 	hero.y = heroSpawnY;
 	hero.scaleX = 0.5;
 	hero.scaleY = 0.5;
+	this.hero = hero;
 	addChild(hero);
     }
 
@@ -75,8 +82,9 @@ class GameStage extends Sprite {
         }
     }
 
-    public function update(passedTime:Float):Void {
-        for (p in platforms) p.update(passedTime);
+    public function update(dt:Float):Void {
+        for (p in platforms) p.update(dt);
+        for (npc in chars) npc.update(dt);
     }
 
     public function getLandedPlatform(x:Float, y:Float, width:Float, height:Float, nextX: Float, nextY: Float):Platform {
@@ -97,4 +105,16 @@ class GameStage extends Sprite {
         }
         return false;
     }
+
+    public function interact():Void {
+        for (c in chars) {
+            if (c.onInteraction == null) continue;
+
+            var hit = hero.intersects(c);
+            if (hit) {
+	        c.onInteraction();
+            }
+        }
+    }
+
 }

@@ -37,7 +37,6 @@ class Game extends Sprite {
     private var isDialogueActive:Bool = false;
 
     private var score:Int = 0;
-    private var chars:Array<NPC> = [];
 
     private var inventory:Inventory;
 
@@ -117,7 +116,7 @@ class Game extends Sprite {
 	    movement.spacePressed = true;
 	}
         if (e.keyCode == Keyboard.ENTER) {
-	    interact();
+	    currentStage.interact();
 	}
     }
 
@@ -141,7 +140,6 @@ class Game extends Sprite {
 	currentStage.update(e.passedTime);
         movement.updateTimers(e.passedTime);
         updateChar(e.passedTime);
-        for (npc in chars) npc.update(e.passedTime);
         camera.update(e.passedTime);
 	updateCollectibles(e.passedTime);
     }
@@ -235,18 +233,7 @@ class Game extends Sprite {
             var npc = new NPC(900, 780, 30, 50, color);
             world.addChild(npc);
             npc.onInteraction = dialogueTest;
-	    chars.push(npc);
-    }
-
-    private function interact():Void {
-        for (c in chars) {
-            if (c.onInteraction == null) continue;
-
-            var hit = hero.intersects(c);
-            if (hit) {
-	        c.onInteraction();
-            }
-        }
+	    currentStage.chars.push(npc);
     }
 
 
