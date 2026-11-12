@@ -8,6 +8,7 @@ import platform.MoveBehavior;
 import npc.NPC;
 import movement.MovementLogic;
 import movement.State;
+import dialogue.DialogueLine;
 
 import collectible.Collectible;
 import collectible.CollectibleType;
@@ -20,7 +21,9 @@ using Intersects;
 class GameStage extends Sprite {
     private var platforms:Array<Platform> = [];
     private var collectibles:Array<Collectible> = [];
-    public var chars:Array<NPC> = [];
+    private var chars:Array<NPC> = [];
+
+    public var makeDialogue: (lines:Array<DialogueLine>) -> (() -> Void);
 
     private var hero:TestCharacter;
     private var inventory:Inventory;
@@ -32,14 +35,16 @@ class GameStage extends Sprite {
     public var heroSpawnX:Float;
     public var heroSpawnY:Float;
 
-    public function new() {
+    public function new(makeDialogue: (lines:Array<DialogueLine>) -> (() -> Void)) {
         super();
 	stageWidth = 2000;
 	stageHeight = 1000;
 	heroSpawnX = stageWidth / 2;
         heroSpawnY = stageHeight - 300;
+	this.makeDialogue = makeDialogue;
         initPlatforms();
 	initCollectibles();
+	initNPCs();
     }
 
     public function addHero(hero:TestCharacter, inventory:Inventory):Void {
@@ -101,6 +106,24 @@ class GameStage extends Sprite {
             c.quad = quad;
             addChild(quad);
         }
+    }
+
+    private function initNPCs():Void {
+	    var color = 0xFFD700;
+            var npc = new NPC(900, 780, 30, 50, color);
+            addChild(npc);
+            npc.onInteraction = makeDialogue([
+                { speaker: "Hero", text: "Blah blah blah" },
+                { speaker: "Test", text: "test test test test", portraitId: "test" },
+                { speaker: null, text: "narrator test", portraitId: "test" },
+                { speaker: "Hero", text: "test?", choices: [
+	            { text: "1", nextIndex: 4},
+	            { text: "2", nextIndex: 5},
+	        ]},
+                { speaker: "Hero", text: "Test 1", nextIndex: 10000 },
+                { speaker: "Hero", text: "Test 2" },
+            ]);
+	    chars.push(npc);
     }
 
     public function update(dt:Float):Void {

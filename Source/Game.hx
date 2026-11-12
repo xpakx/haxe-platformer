@@ -17,7 +17,7 @@ import platform.CrumbleBehavior;
 import platform.ReappearBehavior;
 import platform.MoveBehavior;
 import dialogue.DialogueBox;
-import npc.NPC;
+import dialogue.DialogueLine;
 
 using Intersects;
 
@@ -45,8 +45,7 @@ class Game extends Sprite {
 
     // TODO: multiple stages (codegen?)
     private function loadStage() {
-        currentStage = new GameStage();
-	initNPCs();
+        currentStage = new GameStage(this.makeDialogue);
         world.addChild(currentStage);
 	currentStage.addHero(hero, inventory);
 	currentStage.movement.soundManager = soundManager;
@@ -105,28 +104,11 @@ class Game extends Sprite {
 	hud.updateScore(currentStage.score);
     }
 
-
-    private function dialogueTest():Void {
-        isDialogueActive = true;
-        dialogueBox.startDialogue([
-            { speaker: "Hero", text: "Blah blah blah" },
-            { speaker: "Test", text: "test test test test", portraitId: "test" },
-            { speaker: null, text: "narrator test", portraitId: "test" },
-            { speaker: "Hero", text: "test?", choices: [
-	        { text: "1", nextIndex: 4},
-	        { text: "2", nextIndex: 5},
-	    ]},
-            { speaker: "Hero", text: "Test 1", nextIndex: 10000 },
-            { speaker: "Hero", text: "Test 2" },
-        ]);
-    }
-
-    private function initNPCs():Void {
-	    var color = 0xFFD700;
-            var npc = new NPC(900, 780, 30, 50, color);
-            world.addChild(npc);
-            npc.onInteraction = dialogueTest;
-	    currentStage.chars.push(npc);
+    public function makeDialogue(lines:Array<DialogueLine>):() -> Void {
+        return () -> {
+            isDialogueActive = true;
+            dialogueBox.startDialogue(lines);
+        };
     }
 }
 
