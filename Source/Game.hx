@@ -43,30 +43,37 @@ class Game extends Sprite {
         addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
     }
 
+    // TODO: multiple stages (codegen?)
+    private function loadStage() {
+        currentStage = new GameStage();
+	initNPCs();
+        world.addChild(currentStage);
+	currentStage.addHero(hero, inventory);
+	currentStage.movement.soundManager = soundManager;
+    }
+
     private function onAddedToStage(e:Event):Void {
         removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 
         world = new Sprite();
         addChild(world);
-
-        currentStage = new GameStage();
-        world.addChild(currentStage);
+        
 
         camera = new Camera2D(world, stage.stageWidth, stage.stageHeight);
 
 	inventory = new Inventory();
 	hero = new TestCharacter();
-	currentStage.addHero(hero, inventory);
 
-	initNPCs();
+	soundManager = new SoundManager();
+	soundManager.initSounds();
+
+
+	loadStage();
         camera.setTarget(hero);
 	camera.snapToTarget();
         stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
         stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
-	soundManager = new SoundManager();
-	soundManager.initSounds();
-	currentStage.movement.soundManager = soundManager;
 
 
         dialogueBox = new DialogueBox(stage.stageWidth, stage.stageHeight);
