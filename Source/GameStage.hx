@@ -7,6 +7,7 @@ import platform.ReappearBehavior;
 import platform.MoveBehavior;
 import npc.NPC;
 import movement.MovementLogic;
+import movement.State;
 
 import collectible.Collectible;
 import collectible.CollectibleType;
@@ -49,6 +50,19 @@ class GameStage extends Sprite {
 	this.hero = hero;
 	addChild(hero);
 	this.inventory = inventory;
+
+	movement = new MovementLogic(hero.x, hero.y, hero.width, hero.height, stageWidth, stageHeight);
+	movement.onStartFall = hero.startFall;
+	movement.onStartJump = hero.startJump;
+	movement.onStartDoubleJump = hero.startDoubleJump;
+	movement.onStartFloat = hero.startFloat;
+	movement.onEndRun = hero.endRun;
+	movement.onStartRun = hero.startRun;
+	movement.isUnlocked = this.stateIsUnlocked;
+	movement.getLandedPlatform = getLandedPlatform;
+	movement.isOnFloor = isOnFloor;
+
+	movement.switchState(movement.state);
     }
 
     private function initPlatforms():Void {
@@ -93,6 +107,7 @@ class GameStage extends Sprite {
         for (p in platforms) p.update(dt);
         for (npc in chars) npc.update(dt);
 	updateCollectibles(dt);
+        updateChar(dt);
     }
 
     public function getLandedPlatform(x:Float, y:Float, width:Float, height:Float, nextX: Float, nextY: Float):Platform {
@@ -186,4 +201,32 @@ class GameStage extends Sprite {
             movement.spaceJustPressed = false;
 	}
     }
+
+    private function stateIsUnlocked(newState:State):Bool {
+        switch(newState) {
+	    case Fall:
+	       return true;
+	    case Floor:
+	       return true;
+	    case Jump:
+	       return true;
+	    case DoubleJump:
+	       return inventory.hasEffect(DoubleJumpAbility) && movement.canDoubleJump;
+	    case FloatState:
+	       return inventory.hasEffect(FloatAbility) && movement.floatCooldown <= 0.0 && movement.canFloat;
+	}
+    }
+
+
+    private function updateChar(dt:Float):Void {
+	movement.update(dt);
+	updateHeroSprite();
+    }
+
+    private function updateHeroSprite():Void {
+        hero.x = movement.x;
+	hero.y = movement.y;
+	hero.scaleX = movement.scaleX;
+    }
+
 }

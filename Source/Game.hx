@@ -16,8 +16,6 @@ import platform.Platform;
 import platform.CrumbleBehavior;
 import platform.ReappearBehavior;
 import platform.MoveBehavior;
-import movement.MovementLogic;
-import movement.State;
 import dialogue.DialogueBox;
 import npc.NPC;
 
@@ -59,18 +57,6 @@ class Game extends Sprite {
 	inventory = new Inventory();
 	hero = new TestCharacter();
 	currentStage.addHero(hero, inventory);
-	currentStage.movement = new MovementLogic(hero.x, hero.y, hero.width, hero.height, currentStage.stageWidth, currentStage.stageHeight);
-	currentStage.movement.onStartFall = hero.startFall;
-	currentStage.movement.onStartJump = hero.startJump;
-	currentStage.movement.onStartDoubleJump = hero.startDoubleJump;
-	currentStage.movement.onStartFloat = hero.startFloat;
-	currentStage.movement.onEndRun = hero.endRun;
-	currentStage.movement.onStartRun = hero.startRun;
-	currentStage.movement.isUnlocked = this.stateIsUnlocked;
-	currentStage.movement.getLandedPlatform = currentStage.getLandedPlatform;
-	currentStage.movement.isOnFloor = currentStage.isOnFloor;
-
-	currentStage.movement.switchState(currentStage.movement.state);
 
 	initNPCs();
         camera.setTarget(hero);
@@ -111,37 +97,10 @@ class Game extends Sprite {
             dialogueBox.update(e.passedTime);
         }
 	currentStage.update(e.passedTime);
-        updateChar(e.passedTime);
         camera.update(e.passedTime);
 	hud.updateScore(currentStage.score);
     }
 
-    private function updateChar(dt:Float):Void {
-	currentStage.movement.update(dt);
-	updateHeroSprite();
-    }
-
-    private function updateHeroSprite():Void {
-        hero.x = currentStage.movement.x;
-	hero.y = currentStage.movement.y;
-	hero.scaleX = currentStage.movement.scaleX;
-    }
-
-
-    private function stateIsUnlocked(newState:State):Bool {
-        switch(newState) {
-	    case Fall:
-	       return true;
-	    case Floor:
-	       return true;
-	    case Jump:
-	       return true;
-	    case DoubleJump:
-	       return inventory.hasEffect(DoubleJumpAbility) && currentStage.movement.canDoubleJump;
-	    case FloatState:
-	       return inventory.hasEffect(FloatAbility) && currentStage.movement.floatCooldown <= 0.0 && currentStage.movement.canFloat;
-	}
-    }
 
     private function detectLedge():Bool {
         var facingDir = (hero.scaleX < 0) ? -1 : 1;
@@ -207,7 +166,5 @@ class Game extends Sprite {
             npc.onInteraction = dialogueTest;
 	    currentStage.chars.push(npc);
     }
-
-
 }
 
