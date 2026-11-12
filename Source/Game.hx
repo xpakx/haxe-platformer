@@ -57,7 +57,6 @@ class Game extends Sprite {
 
         world = new Sprite();
         addChild(world);
-        
 
         camera = new Camera2D(world, stage.stageWidth, stage.stageHeight);
 
@@ -67,14 +66,12 @@ class Game extends Sprite {
 	soundManager = new SoundManager();
 	soundManager.initSounds();
 
-
 	loadStage();
         camera.setTarget(hero);
 	camera.snapToTarget();
         stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
         stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
-
 
         dialogueBox = new DialogueBox(stage.stageWidth, stage.stageHeight);
         dialogueBox.visible = false;
@@ -106,48 +103,6 @@ class Game extends Sprite {
 	currentStage.update(e.passedTime);
         camera.update(e.passedTime);
 	hud.updateScore(currentStage.score);
-    }
-
-
-    private function detectLedge():Bool {
-        var facingDir = (hero.scaleX < 0) ? -1 : 1;
-
-        var chestX = (facingDir < 0) ? hero.x : hero.x + hero.width;
-        var chestY = hero.y + (hero.height * 0.3);
-
-        var hitPlatform:Platform = null;
-        for (p in currentStage.platforms) {
-	    if (chestY < p.y || chestY > p.y + p.height) {
-	        continue;
-	    }
-	    if (facingDir < 0) {
-	        if (chestX >= p.x + p.width && chestX <= p.x + p.width + hero.width) {
-			hitPlatform = p;
-			break;
-		}
-	    } else {
-	        if (chestX <= p.x && chestX >= p.x - hero.width) {
-			hitPlatform = p;
-			break;
-		}
-	    }
-        }
-
-        if (hitPlatform == null) return false;
-
-        var headY = hitPlatform.y - hero.height;
-        var headX = hero.x + (facingDir * 10);
-
-        for (p in currentStage.platforms) {
-            if (p == hitPlatform) continue;
-            if (headX + hero.width > p.x && headX < p.x + p.width &&
-                headY + hero.height > p.y && headY < p.y + p.height) {
-                return false;
-            }
-        }    
-
-
-        return true;
     }
 
 
