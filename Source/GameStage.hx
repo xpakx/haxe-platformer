@@ -27,7 +27,7 @@ class GameStage extends Sprite {
 
     private var hero:TestCharacter;
     private var inventory:Inventory;
-    public var movement:MovementLogic;
+    private var movement:MovementLogic;
     public var score:Int = 0;
 
     public var stageWidth:Float;
@@ -35,16 +35,20 @@ class GameStage extends Sprite {
     public var heroSpawnX:Float;
     public var heroSpawnY:Float;
 
-    public function new(makeDialogue: (lines:Array<DialogueLine>) -> (() -> Void)) {
+    public function new(game: Game) {
         super();
 	stageWidth = 2000;
 	stageHeight = 1000;
 	heroSpawnX = stageWidth / 2;
         heroSpawnY = stageHeight - 300;
-	this.makeDialogue = makeDialogue;
+	this.makeDialogue = game.makeDialogue;
         initPlatforms();
 	initCollectibles();
 	initNPCs();
+    }
+
+    public function initSound(soundManager:SoundManager):Void {
+       this.movement.soundManager = soundManager;
     }
 
     public function addHero(hero:TestCharacter, inventory:Inventory):Void {

@@ -45,10 +45,13 @@ class Game extends Sprite {
 
     // TODO: multiple stages (codegen?)
     private function loadStage() {
-        currentStage = new GameStage(this.makeDialogue);
+        currentStage = new GameStage(this);
         world.addChild(currentStage);
 	currentStage.addHero(hero, inventory);
-	currentStage.movement.soundManager = soundManager;
+	currentStage.initSound(soundManager);
+
+        camera.setTarget(hero);
+	camera.snapToTarget();
     }
 
     private function onAddedToStage(e:Event):Void {
@@ -65,9 +68,6 @@ class Game extends Sprite {
 	soundManager = new SoundManager();
 	soundManager.initSounds();
 
-	loadStage();
-        camera.setTarget(hero);
-	camera.snapToTarget();
         stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
         stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
         addEventListener(Event.ENTER_FRAME, onEnterFrame);
@@ -81,6 +81,8 @@ class Game extends Sprite {
 
         hud = new HUDLayer(stage.stageWidth);
         addChild(hud);
+
+	loadStage();
     }
 
     private function onKeyDown(e:KeyboardEvent):Void {
